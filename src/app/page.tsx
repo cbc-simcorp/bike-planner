@@ -90,7 +90,7 @@ export default async function Home({ searchParams }: HomeProps) {
             Wind & Weather
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            {homeTown} to work
+            Between {homeTown} and Work
           </p>
         </div>
         <div className="flex items-center gap-2 pt-0.5">
