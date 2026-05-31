@@ -211,7 +211,11 @@ export function WindDateCarousel({
           {options.map((option) => {
             const dayData = dataByDate[option.value];
             return (
-              <div key={option.value} className="w-full flex-none px-0.5">
+              <div
+                key={option.value}
+                className="flex-none px-0.5"
+                style={{ width: `${100 / options.length}%` }}
+              >
                 <div className="grid grid-cols-1 gap-4">
                   {legs.map((leg) => {
                     const w = leg.id === "morning" ? dayData?.morning : dayData?.evening;
