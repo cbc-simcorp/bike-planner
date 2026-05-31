@@ -3,7 +3,8 @@
 import { assessWind, compassLabel, type Leg } from "@/lib/wind";
 import type { LegWind } from "@/lib/openMeteo";
 import { describeWeather } from "@/lib/weatherCode";
-import { useEffect, useState } from "react";
+import { pickRandomBikeQuote } from "@/lib/quotes";
+import { useEffect, useRef, useState } from "react";
 
 type Props = {
   leg: Leg;
@@ -12,15 +13,28 @@ type Props = {
 
 export function WindCard({ leg, wind }: Props) {
   const [isGusting, setIsGusting] = useState(false);
+  const [gustQuote, setGustQuote] = useState<string | null>(null);
+  const gustTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!isGusting) return;
-    const timeout = window.setTimeout(() => setIsGusting(false), 700);
-    return () => window.clearTimeout(timeout);
-  }, [isGusting]);
+    return () => {
+      if (gustTimeoutRef.current !== null) {
+        window.clearTimeout(gustTimeoutRef.current);
+      }
+    };
+  }, []);
 
   const triggerGust = () => {
+    setGustQuote(pickRandomBikeQuote());
     setIsGusting(true);
+
+    if (gustTimeoutRef.current !== null) {
+      window.clearTimeout(gustTimeoutRef.current);
+    }
+
+    gustTimeoutRef.current = window.setTimeout(() => {
+      setIsGusting(false);
+    }, 700);
   };
 
   if (!wind.data) {
@@ -75,13 +89,7 @@ export function WindCard({ leg, wind }: Props) {
   // Arrow points where the wind is going (windFrom + 180), with 0° = up (north).
   const arrowRotation = (windFromDeg + 180) % 360;
 
-  const gustLabel = isGusting
-    ? a.kind === "tailwind"
-      ? "gust mode: pushing from behind"
-      : a.kind === "headwind"
-        ? "gust mode: pushing against you"
-        : "gust mode: sideways breeze"
-    : null;
+  const gustLabel = isGusting ? gustQuote : null;
 
   return (
     <article
@@ -116,8 +124,8 @@ export function WindCard({ leg, wind }: Props) {
             type="button"
             onClick={triggerGust}
             className="touch-manipulation rounded-full outline-none ring-sky-500/30 transition focus-visible:ring-2"
-            aria-label="Play wind gust animation"
-            title="Tap for a gust"
+            aria-label="Show random bike quote"
+            title="Tap for a quote"
           >
             <CompassArrow
               rotationDeg={arrowRotation}
@@ -133,7 +141,7 @@ export function WindCard({ leg, wind }: Props) {
           onClick={triggerGust}
           className="touch-manipulation text-left outline-none ring-sky-500/30 transition focus-visible:ring-2"
           aria-label="Wind segment chart"
-          title="Tap for a gust"
+          title="Tap for a quote"
         >
           <AlongBarChart values={pointAlong} gustLabel={gustLabel} />
         </button>
@@ -198,12 +206,25 @@ function AlongBarChart({
   const slot = (width - innerPad * 2) / count;
   const barWidth = Math.max(8, slot * 0.6);
   const scale = (height * 0.42) / maxAbs;
+  const quoteFontSizeClass = gustLabel
+    ? gustLabel.length <= 26
+      ? "text-2xl"
+      : gustLabel.length <= 42
+        ? "text-xl"
+        : gustLabel.length <= 62
+          ? "text-lg"
+          : gustLabel.length <= 78
+            ? "text-base"
+            : "text-sm"
+    : "text-sm";
 
   return (
     <div className="rounded-xl border border-slate-200 bg-slate-50 p-1.5 dark:border-slate-700 dark:bg-slate-950/40">
       {gustLabel ? (
-        <div className="flex h-20 items-center justify-center px-2">
-          <p className="text-center text-sm font-semibold leading-snug text-sky-700 dark:text-sky-300 sm:text-base">
+        <div className="flex h-20 items-center justify-center overflow-hidden px-1.5">
+          <p
+            className={`w-full break-words text-center font-semibold leading-tight text-sky-700 dark:text-sky-300 ${quoteFontSizeClass}`}
+          >
             {gustLabel}
           </p>
         </div>
