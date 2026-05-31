@@ -27,13 +27,38 @@ export function DateRangePane({
   const canGoPrev = selectedIndex > 0;
   const canGoNext = selectedIndex < options.length - 1;
 
+  const navigateTo = (href: string, direction: "forward" | "backward") => {
+    const doc = document as Document & {
+      startViewTransition?: (cb: () => void) => {
+        finished: Promise<void>;
+      };
+    };
+
+    document.documentElement.dataset.navDirection = direction;
+
+    if (doc.startViewTransition) {
+      doc
+        .startViewTransition(() => {
+          router.push(href);
+        })
+        .finished.finally(() => {
+          delete document.documentElement.dataset.navDirection;
+        });
+      return;
+    }
+
+    router.push(href);
+    delete document.documentElement.dataset.navDirection;
+  };
+
   const goToIndex = (index: number) => {
     if (index < 0 || index > options.length - 1) return;
     const value = options[index].value;
+    const direction = index > selectedIndex ? "forward" : "backward";
     if (index === 0) {
-      router.push(pathname);
+      navigateTo(pathname, direction);
     } else {
-      router.push(`${pathname}?date=${value}`);
+      navigateTo(`${pathname}?date=${value}`, direction);
     }
   };
 
@@ -103,7 +128,7 @@ export function DateRangePane({
         </div>
       </div>
 
-      {children}
+      <div className="date-cards-pane">{children}</div>
     </section>
   );
 }
