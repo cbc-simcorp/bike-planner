@@ -1,12 +1,12 @@
 import { SettingsButton } from "@/components/SettingsButton";
 import { WindDateCarousel } from "@/components/WindDateCarousel";
-import { fetchWindForDate } from "@/lib/openMeteo";
+import { fetchWindForDates } from "@/lib/openMeteo";
 import {
   addDaysIso,
   buildCommuteLegs,
   copenhagenDateLabel,
   copenhagenToday,
-  midpointBetween,
+  sampleRoutePoints,
 } from "@/lib/wind";
 import { parseSettingsCookie, SETTINGS_COOKIE } from "@/lib/settings";
 import { cookies } from "next/headers";
@@ -31,7 +31,7 @@ export default async function Home({ searchParams }: HomeProps) {
   const settingsCookie = cookieStore.get(SETTINGS_COOKIE)?.value;
   const settings = parseSettingsCookie(settingsCookie);
 
-  const routeMidpoint = midpointBetween(settings.home, settings.destination);
+  const routePoints = sampleRoutePoints(settings.home, settings.destination, 7);
   const legs = buildCommuteLegs(
     settings.home,
     settings.destination,
@@ -61,20 +61,17 @@ export default async function Home({ searchParams }: HomeProps) {
     dateOptions.findIndex((d) => d.value === clampedDate)
   );
 
-  let dataByDate: Record<string, Awaited<ReturnType<typeof fetchWindForDate>>> =
-    {};
+  let dataByDate: Record<string, Awaited<ReturnType<typeof fetchWindForDates>>[string]> = {};
   let error: string | null = null;
   try {
-    const entries = await Promise.all(
-      dateOptions.map(async (option) => {
-        const dayData = await fetchWindForDate(option.value, routeMidpoint, {
-          morningHour: settings.morningHour,
-          eveningHour: settings.eveningHour,
-        });
-        return [option.value, dayData] as const;
-      })
+    dataByDate = await fetchWindForDates(
+      dateOptions.map((option) => option.value),
+      routePoints,
+      {
+        morningHour: settings.morningHour,
+        eveningHour: settings.eveningHour,
+      }
     );
-    dataByDate = Object.fromEntries(entries);
   } catch (e) {
     error = e instanceof Error ? e.message : String(e);
   }

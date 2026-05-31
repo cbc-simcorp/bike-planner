@@ -63,6 +63,19 @@ export function midpointBetween(a: Point, b: Point): Point {
   };
 }
 
+export function sampleRoutePoints(home: Point, work: Point, count: number): Point[] {
+  const n = Math.max(1, Math.floor(count));
+  if (n === 1) return [midpointBetween(home, work)];
+
+  return Array.from({ length: n }, (_, i) => {
+    const t = i / (n - 1);
+    return {
+      lat: home.lat + (work.lat - home.lat) * t,
+      lon: home.lon + (work.lon - home.lon) * t,
+    };
+  });
+}
+
 export function buildCommuteLegs(
   home: Point,
   work: Point,

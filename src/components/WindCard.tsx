@@ -28,6 +28,9 @@ export function WindCard({ leg, wind }: Props) {
     weatherCode,
   } = wind.data;
   const a = assessWind(windFromDeg, windSpeedMs, leg.travelBearing);
+  const pointAlong = wind.points.map((p) =>
+    assessWind(p.windFromDeg, p.windSpeedMs, leg.travelBearing).along
+  );
   const cond = describeWeather(weatherCode);
 
   const palette = {
@@ -84,8 +87,8 @@ export function WindCard({ leg, wind }: Props) {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-1 items-start gap-4 sm:grid-cols-[auto,1fr] sm:gap-5">
-        <div className="mx-auto sm:mx-0">
+      <div className="mt-4 grid grid-cols-[auto,1fr] items-start gap-3 sm:gap-5">
+        <div>
           <CompassArrow
             rotationDeg={arrowRotation}
             travelBearing={leg.travelBearing}
@@ -93,46 +96,104 @@ export function WindCard({ leg, wind }: Props) {
           />
         </div>
 
-        <div>
-          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-            <span className="text-xl leading-none" aria-hidden>
-              {cond.emoji}
-            </span>
-            <span className="font-medium text-slate-700 dark:text-slate-200">
-              {cond.label}
-            </span>
-            <span className="text-slate-400">·</span>
-            <span className="tabular-nums font-semibold">
-              {Math.round(temperatureC)} °C
-            </span>
-            {precipitationMm > 0 && (
-              <>
-                <span className="text-slate-400">·</span>
-                <span className="tabular-nums text-sky-700 dark:text-sky-300">
-                  {precipitationMm.toFixed(1)} mm
-                </span>
-              </>
-            )}
-          </div>
+        <AlongBarChart values={pointAlong} />
+      </div>
 
-          <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-600 dark:text-slate-400 sm:text-sm">
-            <dt>From</dt>
-            <dd className="text-right tabular-nums">
-              {compassLabel(windFromDeg)} ({Math.round(windFromDeg)}°)
-            </dd>
-            <dt>Along travel</dt>
-            <dd className="text-right tabular-nums">
-              {a.along >= 0 ? "+" : ""}
-              {a.along.toFixed(1)} m/s
-            </dd>
-            <dt>Crosswind</dt>
-            <dd className="text-right tabular-nums">
-              {Math.abs(a.cross).toFixed(1)} m/s
-            </dd>
-          </dl>
+      <div className="mt-3">
+        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+          <span className="text-xl leading-none" aria-hidden>
+            {cond.emoji}
+          </span>
+          <span className="font-medium text-slate-700 dark:text-slate-200">
+            {cond.label}
+          </span>
+          <span className="text-slate-400">·</span>
+          <span className="tabular-nums font-semibold">
+            {Math.round(temperatureC)} °C
+          </span>
+          {precipitationMm > 0 && (
+            <>
+              <span className="text-slate-400">·</span>
+              <span className="tabular-nums text-sky-700 dark:text-sky-300">
+                {precipitationMm.toFixed(1)} mm
+              </span>
+            </>
+          )}
         </div>
+
+        <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-600 dark:text-slate-400 sm:text-sm">
+          <dt>From</dt>
+          <dd className="text-right tabular-nums">
+            {compassLabel(windFromDeg)} ({Math.round(windFromDeg)}°)
+          </dd>
+          <dt>Along travel</dt>
+          <dd className="text-right tabular-nums">
+            {a.along >= 0 ? "+" : ""}
+            {a.along.toFixed(1)} m/s
+          </dd>
+          <dt>Crosswind</dt>
+          <dd className="text-right tabular-nums">
+            {Math.abs(a.cross).toFixed(1)} m/s
+          </dd>
+        </dl>
       </div>
     </article>
+  );
+}
+
+function AlongBarChart({ values }: { values: number[] }) {
+  const bars = values.slice(0, 7);
+  const count = bars.length || 7;
+  const maxAbs = Math.max(0.5, ...bars.map((v) => Math.abs(v)));
+  const width = 240;
+  const height = 110;
+  const mid = height / 2;
+  const innerPad = 10;
+  const slot = (width - innerPad * 2) / count;
+  const barWidth = Math.max(8, slot * 0.6);
+  const scale = (height * 0.42) / maxAbs;
+
+  return (
+    <div className="rounded-xl border border-slate-200 bg-slate-50 p-2 dark:border-slate-700 dark:bg-slate-950/40">
+      <svg
+        viewBox={`0 0 ${width} ${height}`}
+        className="h-24 w-full"
+        role="img"
+        aria-label="Route segment wind projection chart"
+      >
+        <line
+          x1={innerPad}
+          x2={width - innerPad}
+          y1={mid}
+          y2={mid}
+          className="stroke-slate-400/70 dark:stroke-slate-500/70"
+          strokeWidth="1"
+        />
+        {Array.from({ length: count }).map((_, i) => {
+          const v = bars[i] ?? 0;
+          const h = Math.abs(v) * scale;
+          const x = innerPad + i * slot + (slot - barWidth) / 2;
+          const y = v >= 0 ? mid - h : mid;
+          return (
+            <rect
+              key={i}
+              x={x}
+              y={y}
+              width={barWidth}
+              height={Math.max(1, h)}
+              rx="2"
+              fill={v >= 0 ? "#16a34a" : "#dc2626"}
+              opacity="0.9"
+            />
+          );
+        })}
+      </svg>
+      <div className="mt-1 flex justify-between px-1 text-[10px] text-slate-500 dark:text-slate-400">
+        <span>Start</span>
+        <span>Route (7 points)</span>
+        <span>End</span>
+      </div>
+    </div>
   );
 }
 
