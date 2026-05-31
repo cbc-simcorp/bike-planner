@@ -205,7 +205,7 @@ export function WindDateCarousel({
           className={`flex ${isDragging ? "transition-none" : "transition-transform duration-220 ease-out"}`}
           style={{
             width: `${options.length * 100}%`,
-            transform: `translate3d(calc(${-index * 100}% + ${dragX}px), 0, 0)`,
+            transform: `translate3d(calc(${-(index * (100 / options.length))}% + ${dragX}px), 0, 0)`,
           }}
         >
           {options.map((option) => {
