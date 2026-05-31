@@ -134,31 +134,7 @@ export function WindDateCarousel({
   return (
     <section>
       <div className="mb-4 rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
-        <div className="flex items-center justify-between gap-2">
-          <button
-            type="button"
-            onClick={() => goToIndex(index - 1)}
-            disabled={index <= 0}
-            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 enabled:hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-200 dark:enabled:hover:bg-slate-800"
-            aria-label="Go to earlier day"
-          >
-            Previous
-          </button>
-          <p className="text-sm font-semibold text-slate-800 dark:text-slate-100">
-            {currentOption.label}
-          </p>
-          <button
-            type="button"
-            onClick={() => goToIndex(index + 1)}
-            disabled={index >= options.length - 1}
-            className="rounded-lg border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 enabled:hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-40 dark:border-slate-700 dark:text-slate-200 dark:enabled:hover:bg-slate-800"
-            aria-label="Go to later day"
-          >
-            Next
-          </button>
-        </div>
-
-        <div className="mt-3 grid grid-cols-3 gap-2">
+        <div className="grid grid-cols-3 gap-2">
           {options.map((option, idx) => {
             const active = idx === index;
             return (
@@ -166,11 +142,12 @@ export function WindDateCarousel({
                 key={option.value}
                 type="button"
                 onClick={() => goToIndex(idx)}
-                className={`rounded-lg px-2 py-2 text-xs font-semibold transition ${
+                className={`rounded-lg px-2 py-2 text-sm font-semibold transition ${
                   active
-                    ? "bg-sky-100 text-sky-800 dark:bg-sky-900/40 dark:text-sky-200"
-                    : "bg-slate-100 text-slate-600 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
+                    ? "bg-sky-600 text-white ring-2 ring-sky-300 shadow-sm dark:bg-sky-500 dark:text-slate-950 dark:ring-sky-200"
+                    : "bg-slate-100 text-slate-700 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-300 dark:hover:bg-slate-700"
                 }`}
+                aria-pressed={active}
               >
                 {option.label}
               </button>
