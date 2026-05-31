@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   DEFAULT_SETTINGS,
   parseSettingsCookie,
@@ -21,6 +21,12 @@ type GeocodeHit = {
 
 type GeocodeResponse = {
   results?: GeocodeHit[];
+};
+
+type ResolvedLocation = {
+  name: string;
+  latitude: number;
+  longitude: number;
 };
 
 function getCookieValue(name: string): string | undefined {
@@ -60,6 +66,15 @@ async function geocodeDenmarkFirst(query: string): Promise<GeocodeHit | null> {
   return null;
 }
 
+function normalizeText(value: string): string {
+  return value.trim().toLocaleLowerCase("da-DK");
+}
+
+function displaySuggestion(hit: GeocodeHit): string {
+  const region = hit.admin1 || hit.country || "";
+  return region ? `${hit.name}, ${region}` : hit.name;
+}
+
 export default function SettingsPage() {
   const router = useRouter();
 
@@ -83,8 +98,99 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [hint, setHint] = useState<string | null>(null);
+  const [homeSuggestions, setHomeSuggestions] = useState<GeocodeHit[]>([]);
+  const [destinationSuggestions, setDestinationSuggestions] = useState<GeocodeHit[]>(
+    []
+  );
 
   const canSave = useMemo(() => !saving, [saving]);
+
+  useEffect(() => {
+    const query = homeText.trim();
+    if (query.length < 2) return;
+
+    let cancelled = false;
+    const handle = window.setTimeout(async () => {
+      const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
+        query
+      )}&count=5&language=en&format=json&countryCode=DK`;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const json = (await res.json()) as GeocodeResponse;
+        if (!cancelled) setHomeSuggestions(json.results ?? []);
+      } catch {
+        if (!cancelled) setHomeSuggestions([]);
+      }
+    }, 180);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(handle);
+    };
+  }, [homeText]);
+
+  useEffect(() => {
+    const query = destinationText.trim();
+    if (query.length < 2) return;
+
+    let cancelled = false;
+    const handle = window.setTimeout(async () => {
+      const url = `https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(
+        query
+      )}&count=5&language=en&format=json&countryCode=DK`;
+      try {
+        const res = await fetch(url);
+        if (!res.ok) return;
+        const json = (await res.json()) as GeocodeResponse;
+        if (!cancelled) setDestinationSuggestions(json.results ?? []);
+      } catch {
+        if (!cancelled) setDestinationSuggestions([]);
+      }
+    }, 180);
+
+    return () => {
+      cancelled = true;
+      window.clearTimeout(handle);
+    };
+  }, [destinationText]);
+
+  const resolveLocation = async (
+    input: string,
+    initial: CommuteSettings["home"] | CommuteSettings["destination"],
+    suggestions: GeocodeHit[]
+  ): Promise<ResolvedLocation | null> => {
+    const trimmed = input.trim();
+    if (!trimmed) return null;
+
+    // Keep existing coordinates when the user leaves an existing value unchanged.
+    if (normalizeText(trimmed) === normalizeText(initial.name)) {
+      return {
+        name: initial.name,
+        latitude: initial.lat,
+        longitude: initial.lon,
+      };
+    }
+
+    const suggestionMatch = suggestions.find(
+      (s) => normalizeText(s.name) === normalizeText(trimmed)
+    );
+    if (suggestionMatch) {
+      return {
+        name: suggestionMatch.name,
+        latitude: suggestionMatch.latitude,
+        longitude: suggestionMatch.longitude,
+      };
+    }
+
+    const geocoded = await geocodeDenmarkFirst(trimmed);
+    if (!geocoded) return null;
+    return {
+      name: geocoded.name,
+      latitude: geocoded.latitude,
+      longitude: geocoded.longitude,
+    };
+  };
 
   const restoreDefaults = () => {
     setHomeText(DEFAULT_SETTINGS.home.name);
@@ -116,18 +222,22 @@ export default function SettingsPage() {
     setHint("Validating locations...");
 
     try {
-      const [homeHit, destinationHit] = await Promise.all([
-        geocodeDenmarkFirst(homeText.trim()),
-        geocodeDenmarkFirst(destinationText.trim()),
+      const [homeResolved, destinationResolved] = await Promise.all([
+        resolveLocation(homeText, initialSettings.home, homeSuggestions),
+        resolveLocation(
+          destinationText,
+          initialSettings.destination,
+          destinationSuggestions
+        ),
       ]);
 
-      if (!homeHit) {
+      if (!homeResolved) {
         setError("Could not validate home town/address.");
         setHint(null);
         return;
       }
 
-      if (!destinationHit) {
+      if (!destinationResolved) {
         setError("Could not validate destination town/address.");
         setHint(null);
         return;
@@ -135,14 +245,14 @@ export default function SettingsPage() {
 
       const settings: CommuteSettings = {
         home: {
-          name: homeHit.name,
-          lat: homeHit.latitude,
-          lon: homeHit.longitude,
+          name: homeResolved.name,
+          lat: homeResolved.latitude,
+          lon: homeResolved.longitude,
         },
         destination: {
-          name: destinationHit.name,
-          lat: destinationHit.latitude,
-          lon: destinationHit.longitude,
+          name: destinationResolved.name,
+          lat: destinationResolved.latitude,
+          lon: destinationResolved.longitude,
         },
         morningHour,
         eveningHour,
@@ -188,8 +298,16 @@ export default function SettingsPage() {
             value={homeText}
             onChange={(e) => setHomeText(e.target.value)}
             placeholder="Humlebæk"
+            list="home-suggestions"
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none ring-sky-500/40 placeholder:text-slate-400 focus:ring-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           />
+          <datalist id="home-suggestions">
+            {(homeText.trim().length >= 2 ? homeSuggestions : []).map((hit) => (
+              <option key={`${hit.name}-${hit.latitude}-${hit.longitude}`} value={hit.name}>
+                {displaySuggestion(hit)}
+              </option>
+            ))}
+          </datalist>
         </label>
 
         <label className="block">
@@ -201,8 +319,19 @@ export default function SettingsPage() {
             value={destinationText}
             onChange={(e) => setDestinationText(e.target.value)}
             placeholder="Weidekampsgade 16, Copenhagen"
+            list="destination-suggestions"
             className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none ring-sky-500/40 placeholder:text-slate-400 focus:ring-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           />
+          <datalist id="destination-suggestions">
+            {(destinationText.trim().length >= 2
+              ? destinationSuggestions
+              : []
+            ).map((hit) => (
+              <option key={`${hit.name}-${hit.latitude}-${hit.longitude}`} value={hit.name}>
+                {displaySuggestion(hit)}
+              </option>
+            ))}
+          </datalist>
         </label>
 
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -264,7 +393,8 @@ export default function SettingsPage() {
       </section>
 
       <p className="mt-4 text-xs text-slate-500 dark:text-slate-400">
-        Input is validated using geocoding and prefers Danish matches first.
+        Town names are valid input; full street address is optional. Suggestions and
+        validation prefer Danish matches first.
       </p>
     </main>
   );
