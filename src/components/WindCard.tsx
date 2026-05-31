@@ -128,7 +128,7 @@ export function WindCard({ leg, wind }: Props) {
       </div>
 
       {gustLabel && (
-        <div className="mt-2 text-xs font-medium text-sky-700 dark:text-sky-300">
+        <div className="mt-2 text-right text-sm font-medium text-sky-700 dark:text-sky-300 sm:text-base">
           {gustLabel}
         </div>
       )}
