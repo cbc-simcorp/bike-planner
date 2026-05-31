@@ -1,6 +1,7 @@
+import { Suspense } from "react";
 import { SettingsButton } from "@/components/SettingsButton";
-import { WindDateCarousel } from "@/components/WindDateCarousel";
-import { fetchWindForDates } from "@/lib/openMeteo";
+import { WindDataLoader } from "@/components/WindDataLoader";
+import { WindCardsSkeleton } from "@/components/WindCardsSkeleton";
 import {
   addDaysIso,
   buildCommuteLegs,
@@ -61,21 +62,6 @@ export default async function Home({ searchParams }: HomeProps) {
     dateOptions.findIndex((d) => d.value === clampedDate)
   );
 
-  let dataByDate: Record<string, Awaited<ReturnType<typeof fetchWindForDates>>[string]> = {};
-  let error: string | null = null;
-  try {
-    dataByDate = await fetchWindForDates(
-      dateOptions.map((option) => option.value),
-      routePoints,
-      {
-        morningHour: settings.morningHour,
-        eveningHour: settings.eveningHour,
-      }
-    );
-  } catch (e) {
-    error = e instanceof Error ? e.message : String(e);
-  }
-
   return (
     <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] sm:px-6 sm:py-10">
       <header className="mb-6 flex items-start justify-between gap-3">
@@ -92,18 +78,20 @@ export default async function Home({ searchParams }: HomeProps) {
         </div>
       </header>
 
-      {error && (
-        <div className="mb-6 rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm text-rose-800 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-200">
-          Could not load wind data: {error}
-        </div>
-      )}
-
-      <WindDateCarousel
-        options={dateOptions}
-        initialIndex={selectedIndex}
-        legs={legs}
-        dataByDate={dataByDate}
-      />
+      <Suspense
+        fallback={
+          <WindCardsSkeleton dateLabels={dateOptions.map((o) => o.label)} />
+        }
+      >
+        <WindDataLoader
+          dateOptions={dateOptions}
+          selectedIndex={selectedIndex}
+          legs={legs}
+          routePoints={routePoints}
+          morningHour={settings.morningHour}
+          eveningHour={settings.eveningHour}
+        />
+      </Suspense>
 
       <footer className="mt-8 text-xs text-slate-400 dark:text-slate-500">
         Green = tailwind · Amber = crosswind · Red = headwind. Arrow shows where
