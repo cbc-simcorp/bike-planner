@@ -1,6 +1,6 @@
 "use client";
 
-import { assessWind, compassLabel, type Leg } from "@/lib/wind";
+import { assessWind, type Leg } from "@/lib/wind";
 import type { LegWind } from "@/lib/openMeteo";
 import { describeWeather } from "@/lib/weatherCode";
 import { pickRandomBikeQuote } from "@/lib/quotes";
@@ -66,40 +66,45 @@ export function WindCard({ leg, wind }: Props) {
   const {
     windFromDeg,
     windSpeedMs,
-    windGustMs,
     temperatureC,
     precipitationMm,
     weatherCode,
   } = wind.data;
-  const a = assessWind(windFromDeg, windSpeedMs, leg.travelBearing);
   const pointAlong = wind.points.map((p) =>
     assessWind(p.windFromDeg, p.windSpeedMs, leg.travelBearing).along
   );
+  const effectiveRouteWind = pointAlong.length
+    ? pointAlong.reduce((sum, v) => sum + v, 0) / pointAlong.length
+    : 0;
+  const avgWindSpeed = wind.points.length
+    ? wind.points.reduce((sum, p) => sum + p.windSpeedMs, 0) / wind.points.length
+    : windSpeedMs;
   const cond = describeWeather(weatherCode);
 
-  const palette = {
-    tailwind: {
+  const palette =
+    effectiveRouteWind > 0.2
+      ? {
       ring: "ring-emerald-400/60",
       bg: "bg-emerald-50 dark:bg-emerald-950/40",
       text: "text-emerald-700 dark:text-emerald-300",
       arrow: "text-emerald-600 dark:text-emerald-400",
       verdict: "Tailwind",
-    },
-    headwind: {
+      }
+      : effectiveRouteWind < -0.2
+        ? {
       ring: "ring-rose-400/60",
       bg: "bg-rose-50 dark:bg-rose-950/40",
       text: "text-rose-700 dark:text-rose-300",
       arrow: "text-rose-600 dark:text-rose-400",
       verdict: "Headwind",
-    },
-    crosswind: {
-      ring: "ring-amber-400/60",
-      bg: "bg-amber-50 dark:bg-amber-950/40",
-      text: "text-amber-700 dark:text-amber-300",
-      arrow: "text-amber-600 dark:text-amber-400",
-      verdict: "Crosswind",
-    },
-  }[a.kind];
+        }
+        : {
+      ring: "ring-slate-300/70 dark:ring-slate-700/70",
+      bg: "bg-slate-100 dark:bg-slate-800",
+      text: "text-slate-700 dark:text-slate-300",
+      arrow: "text-slate-600 dark:text-slate-300",
+      verdict: "Neutral",
+    };
 
   // Arrow points where the wind is going (windFrom + 180), with 0° = up (north).
   const arrowRotation = (windFromDeg + 180) % 360;
@@ -119,17 +124,24 @@ export function WindCard({ leg, wind }: Props) {
           {palette.verdict}
         </div>
         <div className="text-right">
-          <div className="text-3xl font-bold leading-none tabular-nums sm:text-4xl">
-            {windSpeedMs.toFixed(1)}
-            <span className="ml-1 text-base font-medium text-slate-500 dark:text-slate-400">
+          <div className="text-3xl font-bold leading-none tabular-nums text-slate-900 dark:text-slate-100 sm:text-4xl">
+            {avgWindSpeed.toFixed(1)}
+            <span className="ml-1 text-base font-medium text-slate-700 dark:text-slate-300">
               m/s
             </span>
           </div>
-          {windGustMs !== null && (
-            <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
-              gusts {windGustMs.toFixed(1)} m/s
-            </div>
-          )}
+          <div
+            className={`mt-1 text-sm font-semibold tabular-nums sm:text-base ${
+              effectiveRouteWind > 0
+                ? "text-emerald-700 dark:text-emerald-300"
+                : effectiveRouteWind < 0
+                  ? "text-rose-700 dark:text-rose-300"
+                  : "text-slate-600 dark:text-slate-400"
+            }`}
+          >
+            effective {effectiveRouteWind > 0 ? "+" : ""}
+            {effectiveRouteWind.toFixed(1)} m/s
+          </div>
         </div>
       </div>
 
@@ -188,21 +200,6 @@ export function WindCard({ leg, wind }: Props) {
           )}
         </div>
 
-        <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-600 dark:text-slate-400 sm:text-sm">
-          <dt>From</dt>
-          <dd className="text-right tabular-nums">
-            {compassLabel(windFromDeg)} ({Math.round(windFromDeg)}°)
-          </dd>
-          <dt>Along travel</dt>
-          <dd className="text-right tabular-nums">
-            {a.along >= 0 ? "+" : ""}
-            {a.along.toFixed(1)} m/s
-          </dd>
-          <dt>Crosswind</dt>
-          <dd className="text-right tabular-nums">
-            {Math.abs(a.cross).toFixed(1)} m/s
-          </dd>
-        </dl>
       </div>
     </article>
   );
