@@ -1,0 +1,105 @@
+<svg width="100%" viewBox="55 10 270 270" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>Bike &amp; Wind app icon with strong wind</title>
+  <desc>Bold colorful app icon showing a bicycle with two wheels and dramatic wind streaks on a deep navy background</desc>
+
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1a3a5c"/>
+      <stop offset="100%" stop-color="#0d1f3c"/>
+    </linearGradient>
+    <linearGradient id="wL" x1="0" y1="0.5" x2="1" y2="0.5">
+      <stop offset="0%" stop-color="#4dd8ff" stop-opacity="0"/>
+      <stop offset="70%" stop-color="#4dd8ff" stop-opacity="1"/>
+      <stop offset="100%" stop-color="#4dd8ff" stop-opacity="0.3"/>
+    </linearGradient>
+    <linearGradient id="wR" x1="0" y1="0.5" x2="1" y2="0.5">
+      <stop offset="0%" stop-color="#4dd8ff" stop-opacity="0.8"/>
+      <stop offset="100%" stop-color="#4dd8ff" stop-opacity="0"/>
+    </linearGradient>
+    <linearGradient id="wM" x1="0" y1="0.5" x2="1" y2="0.5">
+      <stop offset="0%" stop-color="#4dd8ff" stop-opacity="0"/>
+      <stop offset="40%" stop-color="#4dd8ff" stop-opacity="0.9"/>
+      <stop offset="100%" stop-color="#4dd8ff" stop-opacity="0"/>
+    </linearGradient>
+    <clipPath id="ic">
+      <rect x="55" y="10" width="270" height="270" rx="60"/>
+    </clipPath>
+  </defs>
+
+  <!-- Background -->
+  <rect x="55" y="10" width="270" height="270" rx="60" fill="url(#bg)"/>
+
+  <g clip-path="url(#ic)">
+
+    <!-- WIND LAYER -->
+    <rect x="55" y="38"  width="270" height="7"  rx="3.5" fill="url(#wM)" opacity="0.5"/>
+    <rect x="55" y="52"  width="200" height="5"  rx="2.5" fill="url(#wL)" opacity="0.55"/>
+    <rect x="55" y="63"  width="240" height="8"  rx="4"   fill="url(#wM)" opacity="0.65"/>
+    <rect x="55" y="75"  width="160" height="5"  rx="2.5" fill="url(#wL)" opacity="0.45"/>
+    <rect x="55" y="90"  width="270" height="9"  rx="4.5" fill="url(#wM)" opacity="0.8"/>
+    <rect x="55" y="103" width="220" height="6"  rx="3"   fill="url(#wL)" opacity="0.7"/>
+    <rect x="55" y="115" width="270" height="7"  rx="3.5" fill="url(#wM)" opacity="0.6"/>
+    <rect x="55" y="126" width="180" height="5"  rx="2.5" fill="url(#wL)" opacity="0.5"/>
+    <rect x="55" y="140" width="270" height="9"  rx="4.5" fill="url(#wM)" opacity="0.55"/>
+    <rect x="55" y="153" width="240" height="6"  rx="3"   fill="url(#wM)" opacity="0.45"/>
+    <rect x="55" y="168" width="270" height="9"  rx="4.5" fill="url(#wM)" opacity="0.75"/>
+    <rect x="55" y="181" width="200" height="6"  rx="3"   fill="url(#wL)" opacity="0.65"/>
+    <rect x="55" y="193" width="270" height="7"  rx="3.5" fill="url(#wM)" opacity="0.6"/>
+    <rect x="55" y="204" width="160" height="5"  rx="2.5" fill="url(#wL)" opacity="0.4"/>
+    <rect x="55" y="218" width="270" height="8"  rx="4"   fill="url(#wM)" opacity="0.55"/>
+    <rect x="55" y="230" width="210" height="5"  rx="2.5" fill="url(#wL)" opacity="0.45"/>
+    <rect x="55" y="242" width="270" height="7"  rx="3.5" fill="url(#wM)" opacity="0.4"/>
+    <rect x="55" y="254" width="170" height="5"  rx="2.5" fill="url(#wL)" opacity="0.35"/>
+
+    <!-- REAR WHEEL cx=118 -->
+    <circle cx="118" cy="165" r="62" fill="none" stroke="#ff5a20" stroke-width="10" opacity="0.2"/>
+    <circle cx="118" cy="165" r="62" fill="none" stroke="#ff6b2b" stroke-width="10"
+            stroke-dasharray="390" stroke-dashoffset="97"/>
+    <g stroke="#ff7840" stroke-width="3" opacity="0.7">
+      <line x1="118" y1="165" x2="118" y2="105"/>
+      <line x1="118" y1="165" x2="170" y2="135"/>
+      <line x1="118" y1="165" x2="178" y2="165"/>
+      <line x1="118" y1="165" x2="170" y2="195"/>
+      <line x1="118" y1="165" x2="118" y2="225"/>
+      <line x1="118" y1="165" x2="66"  y2="195"/>
+      <line x1="118" y1="165" x2="58"  y2="165"/>
+      <line x1="118" y1="165" x2="66"  y2="135"/>
+    </g>
+    <circle cx="118" cy="165" r="10" fill="#ff5a20"/>
+    <circle cx="118" cy="165" r="5"  fill="#0d1f3c"/>
+
+    <!-- FRONT WHEEL cx=262 -->
+    <circle cx="262" cy="165" r="62" fill="none" stroke="#ff3a6e" stroke-width="10" opacity="0.2"/>
+    <circle cx="262" cy="165" r="62" fill="none" stroke="#ff3a6e" stroke-width="10"
+            stroke-dasharray="390" stroke-dashoffset="97"/>
+    <g stroke="#ff5090" stroke-width="3" opacity="0.7">
+      <line x1="262" y1="165" x2="262" y2="105"/>
+      <line x1="262" y1="165" x2="314" y2="135"/>
+      <line x1="262" y1="165" x2="322" y2="165"/>
+      <line x1="262" y1="165" x2="314" y2="195"/>
+      <line x1="262" y1="165" x2="262" y2="225"/>
+      <line x1="262" y1="165" x2="210" y2="195"/>
+      <line x1="262" y1="165" x2="202" y2="165"/>
+      <line x1="262" y1="165" x2="210" y2="135"/>
+    </g>
+    <circle cx="262" cy="165" r="10" fill="#ff3a6e"/>
+    <circle cx="262" cy="165" r="5"  fill="#0d1f3c"/>
+
+    <!-- FRAME only -->
+    <line x1="118" y1="165" x2="190" y2="205" stroke="#ffe066" stroke-width="6" stroke-linecap="round"/>
+    <line x1="190" y1="205" x2="175" y2="115" stroke="#ffe066" stroke-width="6" stroke-linecap="round"/>
+    <line x1="175" y1="115" x2="242" y2="118" stroke="#ffe066" stroke-width="6" stroke-linecap="round"/>
+    <line x1="242" y1="118" x2="190" y2="205" stroke="#ffe066" stroke-width="6" stroke-linecap="round"/>
+    <line x1="242" y1="118" x2="262" y2="165" stroke="#ffe066" stroke-width="6" stroke-linecap="round"/>
+    <line x1="175" y1="115" x2="118" y2="165" stroke="#ffe066" stroke-width="5" stroke-linecap="round"/>
+
+  </g>
+
+  <!-- Icon border shine -->
+  <rect x="55" y="10" width="270" height="270" rx="60" fill="none" stroke="white" stroke-width="1.5" opacity="0.08"/>
+
+  <!-- Label -->
+  <text x="190" y="312" text-anchor="middle" font-size="22" fill="#1a1a2e" font-weight="700" font-family="sans-serif">BIKE &amp; WIND</text>
+  <text x="190" y="334" text-anchor="middle" font-size="14" fill="#666" font-family="sans-serif">App icon preview</text>
+
+</svg>

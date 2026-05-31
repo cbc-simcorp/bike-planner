@@ -13,8 +13,23 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BikePlanner",
-  description: "Plan your bike rides.",
+  title: "BikePlanner — Wind",
+  description: "Phone-friendly bike commute wind planner.",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/icon.svg", type: "image/svg+xml" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }],
+    shortcut: [{ url: "/favicon.ico" }],
+  },
+  appleWebApp: {
+    capable: true,
+    title: "Bike Wind",
+    statusBarStyle: "default",
+  },
 };
 
 export const viewport = {
