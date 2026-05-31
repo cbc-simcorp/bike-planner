@@ -87,7 +87,7 @@ export function WindCard({ leg, wind }: Props) {
         </div>
       </div>
 
-      <div className="mt-4 grid grid-cols-[auto,1fr] items-start gap-3 sm:gap-5">
+      <div className="mt-4 grid grid-cols-[auto_1fr] items-start gap-2 sm:gap-4">
         <div>
           <CompassArrow
             rotationDeg={arrowRotation}
@@ -145,19 +145,19 @@ function AlongBarChart({ values }: { values: number[] }) {
   const bars = values.slice(0, 7);
   const count = bars.length || 7;
   const maxAbs = Math.max(0.5, ...bars.map((v) => Math.abs(v)));
-  const width = 240;
-  const height = 110;
+  const width = 220;
+  const height = 96;
   const mid = height / 2;
-  const innerPad = 10;
+  const innerPad = 8;
   const slot = (width - innerPad * 2) / count;
   const barWidth = Math.max(8, slot * 0.6);
   const scale = (height * 0.42) / maxAbs;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50 p-2 dark:border-slate-700 dark:bg-slate-950/40">
+    <div className="rounded-xl border border-slate-200 bg-slate-50 p-1.5 dark:border-slate-700 dark:bg-slate-950/40">
       <svg
         viewBox={`0 0 ${width} ${height}`}
-        className="h-24 w-full"
+        className="h-20 w-full"
         role="img"
         aria-label="Route segment wind projection chart"
       >
@@ -188,9 +188,8 @@ function AlongBarChart({ values }: { values: number[] }) {
           );
         })}
       </svg>
-      <div className="mt-1 flex justify-between px-1 text-[10px] text-slate-500 dark:text-slate-400">
+      <div className="mt-0.5 flex justify-between px-1 text-[10px] text-slate-500 dark:text-slate-400">
         <span>Start</span>
-        <span>Route (7 points)</span>
         <span>End</span>
       </div>
     </div>
