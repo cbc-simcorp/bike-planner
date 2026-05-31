@@ -135,7 +135,7 @@ export function WindCard({ leg, wind }: Props) {
           aria-label="Wind segment chart"
           title="Tap for a gust"
         >
-          <AlongBarChart values={pointAlong} gusting={isGusting} gustLabel={gustLabel} />
+          <AlongBarChart values={pointAlong} gustLabel={gustLabel} />
         </button>
       </div>
 
@@ -183,11 +183,9 @@ export function WindCard({ leg, wind }: Props) {
 
 function AlongBarChart({
   values,
-  gusting,
   gustLabel,
 }: {
   values: number[];
-  gusting: boolean;
   gustLabel: string | null;
 }) {
   const bars = values.slice(0, 7);
