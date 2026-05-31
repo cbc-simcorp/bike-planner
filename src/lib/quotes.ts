@@ -10,17 +10,17 @@ export const BIKE_QUOTES = [
   "May the watts be with you.",
   "A bike is a bike is a bike",
   "Watts up? You are.",
-  "The peloton called — they want you up front.",
+  "The peloton called, they want you up front.",
   "Cross every bridge in Copenhagen, then cross it again.",
-  "To bike or not to bike — there's no question.",
+  "To bike or not to bike, there's no question.",
   "Less scrolling, more rolling.",
   "I bike, therefore I am.",
-  "Less psychics, more physics",
+  "Next stop: a romkugle in Hornbæk",
   "Nyhavn is prettier from a saddle.",
   "Keep calm and bike to work",
   "Heisenberg is certain: you should be biking.",
   "Hygge on wheels.",
-  "No focaccia, just Pogačar",
+  "Enjoy focaccia, pass Pogačar",
 ] as const;
 
 const RECENT_WINDOW = Math.max(1, Math.min(8, BIKE_QUOTES.length - 1));
