@@ -135,15 +135,9 @@ export function WindCard({ leg, wind }: Props) {
           aria-label="Wind segment chart"
           title="Tap for a gust"
         >
-          <AlongBarChart values={pointAlong} gusting={isGusting} />
+          <AlongBarChart values={pointAlong} gusting={isGusting} gustLabel={gustLabel} />
         </button>
       </div>
-
-      {gustLabel && (
-        <div className="mt-2 text-right text-sm font-medium text-sky-700 dark:text-sky-300 sm:text-base">
-          {gustLabel}
-        </div>
-      )}
 
       <div className="mt-3">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
@@ -190,9 +184,11 @@ export function WindCard({ leg, wind }: Props) {
 function AlongBarChart({
   values,
   gusting,
+  gustLabel,
 }: {
   values: number[];
   gusting: boolean;
+  gustLabel: string | null;
 }) {
   const bars = values.slice(0, 7);
   const count = bars.length || 7;
@@ -206,44 +202,48 @@ function AlongBarChart({
   const scale = (height * 0.42) / maxAbs;
 
   return (
-    <div
-      className={`rounded-xl border border-slate-200 bg-slate-50 p-1.5 transition-transform duration-300 dark:border-slate-700 dark:bg-slate-950/40 ${
-        gusting ? "scale-[1.02] ring-2 ring-sky-300/60 dark:ring-sky-700/50" : ""
-      }`}
-    >
-      <svg
-        viewBox={`0 0 ${width} ${height}`}
-        className="h-20 w-full"
-        role="img"
-        aria-label="Route segment wind projection chart"
-      >
-        <line
-          x1={innerPad}
-          x2={width - innerPad}
-          y1={mid}
-          y2={mid}
-          className="stroke-slate-400/70 dark:stroke-slate-500/70"
-          strokeWidth="1"
-        />
-        {Array.from({ length: count }).map((_, i) => {
-          const v = bars[i] ?? 0;
-          const h = Math.abs(v) * scale;
-          const x = innerPad + i * slot + (slot - barWidth) / 2;
-          const y = v >= 0 ? mid - h : mid;
-          return (
-            <rect
-              key={i}
-              x={x}
-              y={y}
-              width={barWidth}
-              height={Math.max(1, h)}
-              rx="2"
-              fill={v >= 0 ? "#16a34a" : "#dc2626"}
-              opacity={gusting ? "1" : "0.9"}
-            />
-          );
-        })}
-      </svg>
+    <div className="rounded-xl border border-slate-200 bg-slate-50 p-1.5 dark:border-slate-700 dark:bg-slate-950/40">
+      {gustLabel ? (
+        <div className="flex h-20 items-center justify-center px-2">
+          <p className="text-center text-sm font-semibold leading-snug text-sky-700 dark:text-sky-300 sm:text-base">
+            {gustLabel}
+          </p>
+        </div>
+      ) : (
+        <svg
+          viewBox={`0 0 ${width} ${height}`}
+          className="h-20 w-full"
+          role="img"
+          aria-label="Route segment wind projection chart"
+        >
+          <line
+            x1={innerPad}
+            x2={width - innerPad}
+            y1={mid}
+            y2={mid}
+            className="stroke-slate-400/70 dark:stroke-slate-500/70"
+            strokeWidth="1"
+          />
+          {Array.from({ length: count }).map((_, i) => {
+            const v = bars[i] ?? 0;
+            const h = Math.abs(v) * scale;
+            const x = innerPad + i * slot + (slot - barWidth) / 2;
+            const y = v >= 0 ? mid - h : mid;
+            return (
+              <rect
+                key={i}
+                x={x}
+                y={y}
+                width={barWidth}
+                height={Math.max(1, h)}
+                rx="2"
+                fill={v >= 0 ? "#16a34a" : "#dc2626"}
+                opacity="0.9"
+              />
+            );
+          })}
+        </svg>
+      )}
       <div className="mt-0.5 flex justify-between px-1 text-[10px] text-slate-500 dark:text-slate-400">
         <span>Start</span>
         <span>End</span>
