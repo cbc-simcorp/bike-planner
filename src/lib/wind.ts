@@ -4,9 +4,9 @@
 
 export type Leg = {
   id: "morning" | "evening";
-  label: string;       // e.g. "07:00 — Humlebæk → Copenhagen"
+  label: string;       // e.g. "07:00 — To Work"
   timeLabel: string;   // "07:00"
-  routeLabel: string;  // "Humlebæk → Copenhagen"
+  routeLabel: string;  // "To Work"
   hour: number;        // 7 or 17
   travelBearing: number; // degrees, compass
 };
@@ -14,17 +14,17 @@ export type Leg = {
 export const LEGS: Leg[] = [
   {
     id: "morning",
-    label: "07:00 — Humlebæk → Copenhagen",
+    label: "07:00 — To Work",
     timeLabel: "07:00",
-    routeLabel: "Humlebæk → Copenhagen",
+    routeLabel: "To Work",
     hour: 7,
     travelBearing: 177, // roughly due south along the coast
   },
   {
     id: "evening",
-    label: "17:00 — Copenhagen → Humlebæk",
+    label: "17:00 — From Work",
     timeLabel: "17:00",
-    routeLabel: "Copenhagen → Humlebæk",
+    routeLabel: "From Work",
     hour: 17,
     travelBearing: 357, // roughly due north
   },

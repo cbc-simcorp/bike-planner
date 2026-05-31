@@ -63,52 +63,59 @@ export function WindCard({ leg, wind }: Props) {
     >
       <Header leg={leg} forecast={wind.isForecast} />
 
-      <div className="mt-3 flex items-center gap-3 text-sm">
-        <span className="text-2xl leading-none" aria-hidden>
-          {cond.emoji}
-        </span>
-        <span className="font-medium text-slate-700 dark:text-slate-200">
-          {cond.label}
-        </span>
-        <span className="text-slate-400">·</span>
-        <span className="tabular-nums font-semibold">
-          {Math.round(temperatureC)} °C
-        </span>
-        {precipitationMm > 0 && (
-          <>
-            <span className="text-slate-400">·</span>
-            <span className="tabular-nums text-sky-700 dark:text-sky-300">
-              {precipitationMm.toFixed(1)} mm
-            </span>
-          </>
-        )}
-      </div>
-
-      <div className="mt-4 flex items-center gap-5">
-        <CompassArrow
-          rotationDeg={arrowRotation}
-          travelBearing={leg.travelBearing}
-          colorClass={palette.arrow}
-        />
-
-        <div className="flex-1">
-          <div
-            className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${palette.bg} ${palette.text}`}
-          >
-            {palette.verdict}
-          </div>
-          <div className="mt-2 text-3xl font-bold tabular-nums">
-            {windSpeedMs.toFixed(1)}{" "}
-            <span className="text-base font-medium text-slate-500 dark:text-slate-400">
+      <div className="mt-3 flex items-end justify-between gap-3">
+        <div
+          className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${palette.bg} ${palette.text}`}
+        >
+          {palette.verdict}
+        </div>
+        <div className="text-right">
+          <div className="text-3xl font-bold leading-none tabular-nums sm:text-4xl">
+            {windSpeedMs.toFixed(1)}
+            <span className="ml-1 text-base font-medium text-slate-500 dark:text-slate-400">
               m/s
             </span>
           </div>
           {windGustMs !== null && (
-            <div className="text-xs text-slate-500 dark:text-slate-400">
+            <div className="mt-1 text-xs text-slate-500 dark:text-slate-400">
               gusts {windGustMs.toFixed(1)} m/s
             </div>
           )}
-          <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-600 dark:text-slate-400">
+        </div>
+      </div>
+
+      <div className="mt-4 grid grid-cols-1 items-start gap-4 sm:grid-cols-[auto,1fr] sm:gap-5">
+        <div className="mx-auto sm:mx-0">
+          <CompassArrow
+            rotationDeg={arrowRotation}
+            travelBearing={leg.travelBearing}
+            colorClass={palette.arrow}
+          />
+        </div>
+
+        <div>
+          <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
+            <span className="text-xl leading-none" aria-hidden>
+              {cond.emoji}
+            </span>
+            <span className="font-medium text-slate-700 dark:text-slate-200">
+              {cond.label}
+            </span>
+            <span className="text-slate-400">·</span>
+            <span className="tabular-nums font-semibold">
+              {Math.round(temperatureC)} °C
+            </span>
+            {precipitationMm > 0 && (
+              <>
+                <span className="text-slate-400">·</span>
+                <span className="tabular-nums text-sky-700 dark:text-sky-300">
+                  {precipitationMm.toFixed(1)} mm
+                </span>
+              </>
+            )}
+          </div>
+
+          <dl className="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-600 dark:text-slate-400 sm:text-sm">
             <dt>From</dt>
             <dd className="text-right tabular-nums">
               {compassLabel(windFromDeg)} ({Math.round(windFromDeg)}°)
@@ -166,7 +173,7 @@ function CompassArrow({
   return (
     <svg
       viewBox="0 0 100 100"
-      className="h-28 w-28 shrink-0"
+      className="h-24 w-24 shrink-0 sm:h-28 sm:w-28"
       aria-label={`Wind blowing toward ${Math.round(rotationDeg)}°`}
     >
       {/* compass ring */}

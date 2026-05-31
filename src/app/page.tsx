@@ -1,6 +1,6 @@
 import { WindCard } from "@/components/WindCard";
 import { fetchTodaysWind } from "@/lib/openMeteo";
-import { LEGS } from "@/lib/wind";
+import { assessWind, LEGS } from "@/lib/wind";
 
 export const revalidate = 600; // seconds
 
@@ -15,16 +15,48 @@ export default async function Home() {
     error = e instanceof Error ? e.message : String(e);
   }
 
+  const scoredLegs = LEGS.map((leg) => {
+    const w = leg.id === "morning" ? data?.morning : data?.evening;
+    if (!w?.data) return null;
+    const assessment = assessWind(
+      w.data.windFromDeg,
+      w.data.windSpeedMs,
+      leg.travelBearing
+    );
+    return { leg, assessment };
+  }).filter((x): x is NonNullable<typeof x> => x !== null);
+
+  const bestLeg = scoredLegs.length
+    ? scoredLegs.reduce((best, current) =>
+        current.assessment.along > best.assessment.along ? current : best
+      )
+    : null;
+
   return (
-    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-6 sm:px-6 sm:py-10">
+    <main className="mx-auto w-full max-w-3xl flex-1 px-4 py-5 pb-[calc(env(safe-area-inset-bottom)+1.25rem)] sm:px-6 sm:py-10">
       <header className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
           BikePlanner — Wind
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          Humlebæk ⇄ Copenhagen · {data?.date ?? "today"} · data from open-meteo
+          Bike commute · {data?.date ?? "today"} · data from open-meteo
         </p>
       </header>
+
+      {bestLeg && (
+        <section className="mb-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900 dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-sky-200">
+          <p className="text-xs uppercase tracking-wide text-sky-700 dark:text-sky-300">
+            Best leg today
+          </p>
+          <p className="mt-1 text-base font-semibold">
+            {bestLeg.leg.routeLabel} at {bestLeg.leg.timeLabel}
+          </p>
+          <p className="mt-1 text-xs text-sky-700 dark:text-sky-300">
+            Along-travel wind: {bestLeg.assessment.along >= 0 ? "+" : ""}
+            {bestLeg.assessment.along.toFixed(1)} m/s
+          </p>
+        </section>
+      )}
 
       {error && (
         <div className="mb-6 rounded-xl border border-rose-300 bg-rose-50 p-4 text-sm text-rose-800 dark:border-rose-800 dark:bg-rose-950/40 dark:text-rose-200">
@@ -32,7 +64,7 @@ export default async function Home() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+      <div className="grid grid-cols-1 gap-4">
         {LEGS.map((leg) => {
           const w = leg.id === "morning" ? data?.morning : data?.evening;
           return (
