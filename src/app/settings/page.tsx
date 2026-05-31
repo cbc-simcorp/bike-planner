@@ -299,7 +299,7 @@ export default function SettingsPage() {
             onChange={(e) => setHomeText(e.target.value)}
             placeholder="Humlebæk"
             list="home-suggestions"
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none ring-sky-500/40 placeholder:text-slate-400 focus:ring-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base text-slate-900 outline-none ring-sky-500/40 placeholder:text-slate-400 focus:ring-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           />
           <datalist id="home-suggestions">
             {(homeText.trim().length >= 2 ? homeSuggestions : []).map((hit) => (
@@ -320,7 +320,7 @@ export default function SettingsPage() {
             onChange={(e) => setDestinationText(e.target.value)}
             placeholder="Weidekampsgade 16, Copenhagen"
             list="destination-suggestions"
-            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none ring-sky-500/40 placeholder:text-slate-400 focus:ring-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+            className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base text-slate-900 outline-none ring-sky-500/40 placeholder:text-slate-400 focus:ring-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
           />
           <datalist id="destination-suggestions">
             {(destinationText.trim().length >= 2
@@ -343,7 +343,7 @@ export default function SettingsPage() {
               type="time"
               value={morningTime}
               onChange={(e) => setMorningTime(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none ring-sky-500/40 focus:ring-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base text-slate-900 outline-none ring-sky-500/40 focus:ring-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
           </label>
 
@@ -355,7 +355,7 @@ export default function SettingsPage() {
               type="time"
               value={eveningTime}
               onChange={(e) => setEveningTime(e.target.value)}
-              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-sm text-slate-900 outline-none ring-sky-500/40 focus:ring-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
+              className="w-full rounded-lg border border-slate-300 bg-white px-3 py-2 text-base text-slate-900 outline-none ring-sky-500/40 focus:ring-2 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100"
             />
           </label>
         </div>
