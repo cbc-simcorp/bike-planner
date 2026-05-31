@@ -109,13 +109,18 @@ function pickLeg(
   hour: number,
   hourlySeries: OpenMeteoResponse["hourly"][],
   cphDate: string,
-  cphHour: number
+  cphHour: number,
+  cphMinute: number
 ): LegWind {
   const hh = hour.toString().padStart(2, "0");
   const target = `${date}T${hh}:00`;
   const isFutureDate = date > cphDate;
   const isPastDate = date < cphDate;
-  const isForecast = isPastDate ? false : isFutureDate ? true : hour >= cphHour;
+  const isForecast = isPastDate
+    ? false
+    : isFutureDate
+      ? true
+      : hour > cphHour || (hour === cphHour && cphMinute === 0);
 
   const pointSamples: HourlySample[] = [];
   for (const hourly of hourlySeries) {
@@ -166,13 +171,33 @@ export async function fetchWindForDates(
       hour12: false,
     }).format(new Date())
   );
+  const cphMinute = Number(
+    new Intl.DateTimeFormat("en-GB", {
+      timeZone: "Europe/Copenhagen",
+      minute: "2-digit",
+    }).format(new Date())
+  );
 
   const out: Record<string, DayWind> = {};
   for (const date of dates) {
     out[date] = {
       date,
-      morning: pickLeg(date, hours.morningHour, hourlySeries, cphDate, cphHour),
-      evening: pickLeg(date, hours.eveningHour, hourlySeries, cphDate, cphHour),
+      morning: pickLeg(
+        date,
+        hours.morningHour,
+        hourlySeries,
+        cphDate,
+        cphHour,
+        cphMinute
+      ),
+      evening: pickLeg(
+        date,
+        hours.eveningHour,
+        hourlySeries,
+        cphDate,
+        cphHour,
+        cphMinute
+      ),
     };
   }
 
