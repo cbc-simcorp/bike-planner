@@ -12,29 +12,44 @@ type Props = {
 };
 
 export function WindCard({ leg, wind }: Props) {
-  const [isGusting, setIsGusting] = useState(false);
+  const [isSpinning, setIsSpinning] = useState(false);
+  const [isQuoteVisible, setIsQuoteVisible] = useState(false);
+  const [isQuoteFading, setIsQuoteFading] = useState(false);
   const [gustQuote, setGustQuote] = useState<string | null>(null);
-  const gustTimeoutRef = useRef<number | null>(null);
+  const spinTimeoutRef = useRef<number | null>(null);
+  const fadeTimeoutRef = useRef<number | null>(null);
+  const hideTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
     return () => {
-      if (gustTimeoutRef.current !== null) {
-        window.clearTimeout(gustTimeoutRef.current);
-      }
+      if (spinTimeoutRef.current !== null) window.clearTimeout(spinTimeoutRef.current);
+      if (fadeTimeoutRef.current !== null) window.clearTimeout(fadeTimeoutRef.current);
+      if (hideTimeoutRef.current !== null) window.clearTimeout(hideTimeoutRef.current);
     };
   }, []);
 
   const triggerGust = () => {
     setGustQuote(pickRandomBikeQuote());
-    setIsGusting(true);
+    setIsSpinning(true);
+    setIsQuoteVisible(true);
+    setIsQuoteFading(false);
 
-    if (gustTimeoutRef.current !== null) {
-      window.clearTimeout(gustTimeoutRef.current);
-    }
+    if (spinTimeoutRef.current !== null) window.clearTimeout(spinTimeoutRef.current);
+    if (fadeTimeoutRef.current !== null) window.clearTimeout(fadeTimeoutRef.current);
+    if (hideTimeoutRef.current !== null) window.clearTimeout(hideTimeoutRef.current);
 
-    gustTimeoutRef.current = window.setTimeout(() => {
-      setIsGusting(false);
-    }, 700);
+    spinTimeoutRef.current = window.setTimeout(() => {
+      setIsSpinning(false);
+    }, 1000);
+
+    fadeTimeoutRef.current = window.setTimeout(() => {
+      setIsQuoteFading(true);
+    }, 1900);
+
+    hideTimeoutRef.current = window.setTimeout(() => {
+      setIsQuoteVisible(false);
+      setIsQuoteFading(false);
+    }, 2100);
   };
 
   if (!wind.data) {
@@ -89,7 +104,7 @@ export function WindCard({ leg, wind }: Props) {
   // Arrow points where the wind is going (windFrom + 180), with 0° = up (north).
   const arrowRotation = (windFromDeg + 180) % 360;
 
-  const gustLabel = isGusting ? gustQuote : null;
+  const gustLabel = isQuoteVisible ? gustQuote : null;
 
   return (
     <article
@@ -131,7 +146,7 @@ export function WindCard({ leg, wind }: Props) {
               rotationDeg={arrowRotation}
               travelBearing={leg.travelBearing}
               colorClass={palette.arrow}
-              gusting={isGusting}
+              gusting={isSpinning}
             />
           </button>
         </div>
@@ -143,7 +158,11 @@ export function WindCard({ leg, wind }: Props) {
           aria-label="Wind segment chart"
           title="Tap for a quote"
         >
-          <AlongBarChart values={pointAlong} gustLabel={gustLabel} />
+          <AlongBarChart
+            values={pointAlong}
+            gustLabel={gustLabel}
+            quoteFading={isQuoteFading}
+          />
         </button>
       </div>
 
@@ -192,9 +211,11 @@ export function WindCard({ leg, wind }: Props) {
 function AlongBarChart({
   values,
   gustLabel,
+  quoteFading,
 }: {
   values: number[];
   gustLabel: string | null;
+  quoteFading: boolean;
 }) {
   const bars = values.slice(0, 7);
   const count = bars.length || 7;
@@ -223,7 +244,7 @@ function AlongBarChart({
       {gustLabel ? (
         <div className="flex h-20 items-center justify-center overflow-hidden px-1.5">
           <p
-            className={`w-full break-words text-center font-semibold leading-tight text-sky-700 dark:text-sky-300 ${quoteFontSizeClass}`}
+            className={`w-full break-words text-center font-semibold leading-tight text-sky-700 transition-opacity duration-200 dark:text-sky-300 ${quoteFontSizeClass} ${quoteFading ? "opacity-0" : "opacity-100"}`}
           >
             {gustLabel}
           </p>
@@ -311,7 +332,7 @@ function CompassArrow({
     <svg
       viewBox="0 0 100 100"
       className={`h-24 w-24 shrink-0 sm:h-28 sm:w-28 ${
-        gusting ? "animate-[spin_700ms_ease-in-out]" : ""
+        gusting ? "animate-[spin_500ms_linear_2]" : ""
       }`}
       aria-label={`Wind blowing toward ${Math.round(rotationDeg)}°`}
     >
