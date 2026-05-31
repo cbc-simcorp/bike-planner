@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import { SettingsButton } from "@/components/SettingsButton";
+import { ThemeToggle } from "@/components/ThemeToggle";
 import { WindDataLoader } from "@/components/WindDataLoader";
 import { WindCardsSkeleton } from "@/components/WindCardsSkeleton";
 import {
@@ -73,7 +74,8 @@ export default async function Home({ searchParams }: HomeProps) {
             {settings.home.name} to {settings.destination.name} · midpoint weather
           </p>
         </div>
-        <div className="pt-0.5">
+        <div className="flex items-center gap-2 pt-0.5">
+          <ThemeToggle />
           <SettingsButton />
         </div>
       </header>
