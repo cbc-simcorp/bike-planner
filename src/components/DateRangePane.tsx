@@ -72,10 +72,10 @@ export function DateRangePane({
     const delta = endX - touchStartX.current;
     touchStartX.current = null;
 
-    // Swipe right => future day, swipe left => move back toward today.
-    if (delta > 40) {
+    // Swipe left => future day, swipe right => move back toward today.
+    if (delta < -40) {
       goToIndex(selectedIndex + 1);
-    } else if (delta < -40) {
+    } else if (delta > 40) {
       goToIndex(selectedIndex - 1);
     }
   };
