@@ -3,7 +3,7 @@
 import { assessWind, compassLabel, type Leg } from "@/lib/wind";
 import type { LegWind } from "@/lib/openMeteo";
 import { describeWeather } from "@/lib/weatherCode";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 
 type Props = {
   leg: Leg;
@@ -12,9 +12,6 @@ type Props = {
 
 export function WindCard({ leg, wind }: Props) {
   const [isGusting, setIsGusting] = useState(false);
-  const [showWindDetails, setShowWindDetails] = useState(false);
-  const longPressTimerRef = useRef<number | null>(null);
-  const longPressFiredRef = useRef(false);
 
   useEffect(() => {
     if (!isGusting) return;
@@ -22,40 +19,8 @@ export function WindCard({ leg, wind }: Props) {
     return () => window.clearTimeout(timeout);
   }, [isGusting]);
 
-  useEffect(() => {
-    if (!showWindDetails) return;
-    const timeout = window.setTimeout(() => setShowWindDetails(false), 2000);
-    return () => window.clearTimeout(timeout);
-  }, [showWindDetails]);
-
   const triggerGust = () => {
-    setShowWindDetails(false);
     setIsGusting(true);
-  };
-
-  const startCompassPress = () => {
-    longPressFiredRef.current = false;
-    if (longPressTimerRef.current !== null) {
-      window.clearTimeout(longPressTimerRef.current);
-    }
-
-    longPressTimerRef.current = window.setTimeout(() => {
-      longPressFiredRef.current = true;
-      setIsGusting(false);
-      setShowWindDetails(true);
-      longPressTimerRef.current = null;
-    }, 550);
-  };
-
-  const endCompassPress = () => {
-    if (longPressTimerRef.current !== null) {
-      window.clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
-    }
-
-    if (!longPressFiredRef.current) {
-      triggerGust();
-    }
   };
 
   if (!wind.data) {
@@ -149,14 +114,10 @@ export function WindCard({ leg, wind }: Props) {
         <div>
           <button
             type="button"
-            onPointerDown={startCompassPress}
-            onPointerUp={endCompassPress}
-            onPointerLeave={endCompassPress}
-            onPointerCancel={endCompassPress}
-            onContextMenu={(e) => e.preventDefault()}
+            onClick={triggerGust}
             className="touch-manipulation rounded-full outline-none ring-sky-500/30 transition focus-visible:ring-2"
-            aria-label="Wind compass"
-            title="Tap for a gust, long-press for details"
+            aria-label="Play wind gust animation"
+            title="Tap for a gust"
           >
             <CompassArrow
               rotationDeg={arrowRotation}
@@ -181,19 +142,6 @@ export function WindCard({ leg, wind }: Props) {
       {gustLabel && (
         <div className="mt-2 text-right text-sm font-medium text-sky-700 dark:text-sky-300 sm:text-base">
           {gustLabel}
-        </div>
-      )}
-
-      {showWindDetails && (
-        <div className="mt-2 flex justify-end">
-          <div className="rounded-lg border border-slate-200 bg-white/95 px-3 py-2 text-right text-sm text-slate-700 shadow-sm dark:border-slate-700 dark:bg-slate-950/90 dark:text-slate-200 sm:text-base">
-            <div>
-              Along: <span className="tabular-nums font-semibold">{a.along >= 0 ? "+" : ""}{a.along.toFixed(1)} m/s</span>
-            </div>
-            <div>
-              Cross: <span className="tabular-nums font-semibold">{Math.abs(a.cross).toFixed(1)} m/s</span>
-            </div>
-          </div>
         </div>
       )}
 
