@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "BikePlanner — Wind",
+  title: "Bike to Work",
   description: "Phone-friendly bike commute wind planner.",
   manifest: "/manifest.webmanifest",
   icons: {
@@ -27,7 +27,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "Bike Wind",
+    title: "Bike to Work",
     statusBarStyle: "default",
   },
 };

@@ -108,16 +108,13 @@ export default async function Home({ searchParams }: HomeProps) {
       <header className="mb-6 flex items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            BikePlanner — Wind
+            Bike to Work
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Bike commute · midpoint weather · data from open-meteo
           </p>
         </div>
-        <div className="text-right">
-          <p className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            Home
-          </p>
+        <div className="text-right pt-0.5">
           <HomeTownControl homeTown={home.name} />
         </div>
       </header>

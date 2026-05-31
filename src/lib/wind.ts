@@ -23,9 +23,9 @@ export const DEFAULT_HOME = {
 };
 
 export const WORK_DESTINATION = {
-  name: "Copenhagen",
-  lat: 55.6761,
-  lon: 12.5683,
+  name: "Weidekampsgade 16, Copenhagen",
+  lat: 55.668154,
+  lon: 12.580684,
 };
 
 function normalizeBearing(deg: number): number {

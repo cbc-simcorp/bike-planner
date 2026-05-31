@@ -66,7 +66,7 @@ export function HomeTownControl({ homeTown }: Props) {
       type="button"
       onClick={onClick}
       disabled={busy}
-      className="rounded-lg px-2 py-1 text-sm font-semibold text-sky-700 underline decoration-sky-500/60 underline-offset-4 enabled:hover:text-sky-800 disabled:opacity-60 dark:text-sky-300 dark:decoration-sky-300/60 dark:enabled:hover:text-sky-200"
+      className="rounded-lg px-2 py-1 text-base font-semibold text-sky-700 underline decoration-sky-500/60 underline-offset-4 enabled:hover:text-sky-800 disabled:opacity-60 dark:text-sky-300 dark:decoration-sky-300/60 dark:enabled:hover:text-sky-200"
       aria-label="Update home town"
       title="Tap to update home town"
     >
