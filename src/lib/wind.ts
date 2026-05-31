@@ -28,6 +28,9 @@ export const WORK_DESTINATION = {
   lon: 12.580684,
 };
 
+export const DEFAULT_MORNING_HOUR = 7;
+export const DEFAULT_EVENING_HOUR = 17;
+
 function normalizeBearing(deg: number): number {
   return ((deg % 360) + 360) % 360;
 }
@@ -60,22 +63,30 @@ export function midpointBetween(a: Point, b: Point): Point {
   };
 }
 
-export function buildCommuteLegs(home: Point, work: Point): Leg[] {
+export function buildCommuteLegs(
+  home: Point,
+  work: Point,
+  morningHour: number,
+  eveningHour: number
+): Leg[] {
+  const morningLabel = `${morningHour.toString().padStart(2, "0")}:00`;
+  const eveningLabel = `${eveningHour.toString().padStart(2, "0")}:00`;
+
   return [
     {
       id: "morning",
-      label: "07:00 — To Work",
-      timeLabel: "07:00",
+      label: `${morningLabel} — To Work`,
+      timeLabel: morningLabel,
       routeLabel: "To Work",
-      hour: 7,
+      hour: morningHour,
       travelBearing: bearingBetween(home, work),
     },
     {
       id: "evening",
-      label: "17:00 — From Work",
-      timeLabel: "17:00",
+      label: `${eveningLabel} — From Work`,
+      timeLabel: eveningLabel,
       routeLabel: "From Work",
-      hour: 17,
+      hour: eveningHour,
       travelBearing: bearingBetween(work, home),
     },
   ];

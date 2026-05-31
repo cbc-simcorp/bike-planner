@@ -28,8 +28,17 @@ export type LegWind = {
   isForecast: boolean;   // true if the slot is in the future
 };
 
+type CommuteHours = {
+  morningHour: number;
+  eveningHour: number;
+};
+
 /** Fetch hourly weather for a selected date at the bike-route midpoint and pick 07:00 / 17:00. */
-export async function fetchWindForDate(date: string, point: Point): Promise<{
+export async function fetchWindForDate(
+  date: string,
+  point: Point,
+  hours: CommuteHours
+): Promise<{
   date: string;
   morning: LegWind;
   evening: LegWind;
@@ -82,12 +91,16 @@ export async function fetchWindForDate(date: string, point: Point): Promise<{
 
   return {
     date,
-    morning: pick(7),
-    evening: pick(17),
+    morning: pick(hours.morningHour),
+    evening: pick(hours.eveningHour),
   };
 }
 
 /** Convenience wrapper for current date. */
 export async function fetchTodaysWind() {
-  return fetchWindForDate(copenhagenToday(), { lat: 55.83, lon: 12.55 });
+  return fetchWindForDate(
+    copenhagenToday(),
+    { lat: 55.83, lon: 12.55 },
+    { morningHour: 7, eveningHour: 17 }
+  );
 }

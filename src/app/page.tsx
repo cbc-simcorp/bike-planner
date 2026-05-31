@@ -1,4 +1,4 @@
-import { HomeTownControl } from "@/components/HomeTownControl";
+import { SettingsButton } from "@/components/SettingsButton";
 import { WindDateCarousel } from "@/components/WindDateCarousel";
 import { fetchWindForDate } from "@/lib/openMeteo";
 import {
@@ -6,10 +6,10 @@ import {
   buildCommuteLegs,
   copenhagenDateLabel,
   copenhagenToday,
-  DEFAULT_HOME,
   midpointBetween,
-  WORK_DESTINATION,
 } from "@/lib/wind";
+import { parseSettingsCookie, SETTINGS_COOKIE } from "@/lib/settings";
+import { cookies } from "next/headers";
 
 export const revalidate = 600; // seconds
 
@@ -19,52 +19,25 @@ type HomeProps = {
   searchParams?:
     | {
         date?: string | string[];
-        home?: string | string[];
-        hlat?: string | string[];
-        hlon?: string | string[];
       }
     | Promise<{
         date?: string | string[];
-        home?: string | string[];
-        hlat?: string | string[];
-        hlon?: string | string[];
       }>;
 };
 
-function firstParam(v: string | string[] | undefined): string | undefined {
-  return Array.isArray(v) ? v[0] : v;
-}
-
-function parseCoordinate(v: string | undefined): number | null {
-  if (typeof v !== "string") return null;
-  const n = Number(v);
-  return Number.isFinite(n) ? n : null;
-}
-
 export default async function Home({ searchParams }: HomeProps) {
   const resolvedSearchParams = await Promise.resolve(searchParams);
+  const cookieStore = await cookies();
+  const settingsCookie = cookieStore.get(SETTINGS_COOKIE)?.value;
+  const settings = parseSettingsCookie(settingsCookie);
 
-  const rawHome = firstParam(resolvedSearchParams?.home)?.trim();
-  const rawHomeLat = parseCoordinate(firstParam(resolvedSearchParams?.hlat));
-  const rawHomeLon = parseCoordinate(firstParam(resolvedSearchParams?.hlon));
-  const hasValidHomeCoords =
-    rawHomeLat !== null &&
-    rawHomeLon !== null &&
-    rawHomeLat >= -90 &&
-    rawHomeLat <= 90 &&
-    rawHomeLon >= -180 &&
-    rawHomeLon <= 180;
-
-  const home = hasValidHomeCoords
-    ? {
-        name: rawHome || DEFAULT_HOME.name,
-        lat: rawHomeLat,
-        lon: rawHomeLon,
-      }
-    : DEFAULT_HOME;
-
-  const routeMidpoint = midpointBetween(home, WORK_DESTINATION);
-  const legs = buildCommuteLegs(home, WORK_DESTINATION);
+  const routeMidpoint = midpointBetween(settings.home, settings.destination);
+  const legs = buildCommuteLegs(
+    settings.home,
+    settings.destination,
+    settings.morningHour,
+    settings.eveningHour
+  );
 
   const today = copenhagenToday();
   const maxDate = addDaysIso(today, MAX_FUTURE_DAYS);
@@ -94,7 +67,10 @@ export default async function Home({ searchParams }: HomeProps) {
   try {
     const entries = await Promise.all(
       dateOptions.map(async (option) => {
-        const dayData = await fetchWindForDate(option.value, routeMidpoint);
+        const dayData = await fetchWindForDate(option.value, routeMidpoint, {
+          morningHour: settings.morningHour,
+          eveningHour: settings.eveningHour,
+        });
         return [option.value, dayData] as const;
       })
     );
@@ -111,11 +87,11 @@ export default async function Home({ searchParams }: HomeProps) {
             Bike to Work
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            Bike commute · midpoint weather · data from open-meteo
+            {settings.home.name} to {settings.destination.name} · midpoint weather
           </p>
         </div>
-        <div className="text-right pt-0.5">
-          <HomeTownControl homeTown={home.name} />
+        <div className="pt-0.5">
+          <SettingsButton />
         </div>
       </header>
 
