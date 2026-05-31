@@ -96,7 +96,7 @@ export default async function Home({ searchParams }: HomeProps) {
         </div>
       )}
 
-      <DateRangePane options={dateOptions} selectedIndex={selectedIndex}>
+      <DateRangePane options={dateOptions} selectedIndex={selectedIndex} pathname="/">
         <div className="grid grid-cols-1 gap-4">
           {LEGS.map((leg) => {
             const w = leg.id === "morning" ? data?.morning : data?.evening;

@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useRef, type ReactNode, type TouchEventHandler } from "react";
 
 type DateOption = {
@@ -11,13 +11,17 @@ type DateOption = {
 type Props = {
   options: DateOption[];
   selectedIndex: number;
+  pathname: string;
   children: ReactNode;
 };
 
-export function DateRangePane({ options, selectedIndex, children }: Props) {
+export function DateRangePane({
+  options,
+  selectedIndex,
+  pathname,
+  children,
+}: Props) {
   const router = useRouter();
-  const pathname = usePathname();
-  const searchParams = useSearchParams();
   const touchStartX = useRef<number | null>(null);
 
   const canGoPrev = selectedIndex > 0;
@@ -26,14 +30,11 @@ export function DateRangePane({ options, selectedIndex, children }: Props) {
   const goToIndex = (index: number) => {
     if (index < 0 || index > options.length - 1) return;
     const value = options[index].value;
-    const params = new URLSearchParams(searchParams.toString());
     if (index === 0) {
-      params.delete("date");
+      router.push(pathname);
     } else {
-      params.set("date", value);
+      router.push(`${pathname}?date=${value}`);
     }
-    const qs = params.toString();
-    router.push(qs ? `${pathname}?${qs}` : pathname);
   };
 
   const onTouchStart: TouchEventHandler<HTMLDivElement> = (e) => {
