@@ -82,7 +82,7 @@ export function WindDateCarousel({
   const onTouchStart: TouchEventHandler<HTMLDivElement> = (e) => {
     setIsDragging(true);
     startXRef.current = e.touches[0]?.clientX ?? 0;
-    startAtRef.current = performance.now();
+    startAtRef.current = e.timeStamp;
     dragBaseIndexRef.current = index;
     setDragX(0);
   };
@@ -109,7 +109,7 @@ export function WindDateCarousel({
     const endX = e.changedTouches[0]?.clientX ?? startXRef.current;
     const delta = endX - startXRef.current;
 
-    const elapsed = Math.max(1, performance.now() - startAtRef.current);
+    const elapsed = Math.max(1, e.timeStamp - startAtRef.current);
     const velocity = delta / elapsed; // px/ms
 
     const width = trackRef.current?.clientWidth ?? 1;
