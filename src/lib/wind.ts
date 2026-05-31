@@ -11,6 +11,76 @@ export type Leg = {
   travelBearing: number; // degrees, compass
 };
 
+export type Point = {
+  lat: number;
+  lon: number;
+};
+
+export const DEFAULT_HOME = {
+  name: "Humlebæk",
+  lat: 55.9617,
+  lon: 12.5345,
+};
+
+export const WORK_DESTINATION = {
+  name: "Copenhagen",
+  lat: 55.6761,
+  lon: 12.5683,
+};
+
+function normalizeBearing(deg: number): number {
+  return ((deg % 360) + 360) % 360;
+}
+
+function toRad(deg: number): number {
+  return (deg * Math.PI) / 180;
+}
+
+function toDeg(rad: number): number {
+  return (rad * 180) / Math.PI;
+}
+
+export function bearingBetween(from: Point, to: Point): number {
+  const phi1 = toRad(from.lat);
+  const phi2 = toRad(to.lat);
+  const dLambda = toRad(to.lon - from.lon);
+
+  const y = Math.sin(dLambda) * Math.cos(phi2);
+  const x =
+    Math.cos(phi1) * Math.sin(phi2) -
+    Math.sin(phi1) * Math.cos(phi2) * Math.cos(dLambda);
+
+  return normalizeBearing(toDeg(Math.atan2(y, x)));
+}
+
+export function midpointBetween(a: Point, b: Point): Point {
+  return {
+    lat: (a.lat + b.lat) / 2,
+    lon: (a.lon + b.lon) / 2,
+  };
+}
+
+export function buildCommuteLegs(home: Point, work: Point): Leg[] {
+  return [
+    {
+      id: "morning",
+      label: "07:00 — To Work",
+      timeLabel: "07:00",
+      routeLabel: "To Work",
+      hour: 7,
+      travelBearing: bearingBetween(home, work),
+    },
+    {
+      id: "evening",
+      label: "17:00 — From Work",
+      timeLabel: "17:00",
+      routeLabel: "From Work",
+      hour: 17,
+      travelBearing: bearingBetween(work, home),
+    },
+  ];
+}
+
 export const LEGS: Leg[] = [
   {
     id: "morning",
@@ -29,10 +99,6 @@ export const LEGS: Leg[] = [
     travelBearing: 357, // roughly due north
   },
 ];
-
-// Midpoint of the bike route along the Øresund coast (≈ Rungsted area).
-export const ROUTE_LAT = 55.83;
-export const ROUTE_LON = 12.55;
 
 export type WindAssessment = {
   kind: "tailwind" | "headwind" | "crosswind";

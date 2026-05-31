@@ -1,4 +1,4 @@
-import { ROUTE_LAT, ROUTE_LON, copenhagenToday } from "./wind";
+import { copenhagenToday, type Point } from "./wind";
 
 export type HourlySample = {
   time: string;             // "YYYY-MM-DDTHH:MM" local (Europe/Copenhagen)
@@ -29,15 +29,15 @@ export type LegWind = {
 };
 
 /** Fetch hourly weather for a selected date at the bike-route midpoint and pick 07:00 / 17:00. */
-export async function fetchWindForDate(date: string): Promise<{
+export async function fetchWindForDate(date: string, point: Point): Promise<{
   date: string;
   morning: LegWind;
   evening: LegWind;
 }> {
   const url =
     "https://api.open-meteo.com/v1/forecast" +
-    `?latitude=${ROUTE_LAT}` +
-    `&longitude=${ROUTE_LON}` +
+    `?latitude=${point.lat}` +
+    `&longitude=${point.lon}` +
     "&hourly=wind_speed_10m,wind_direction_10m,wind_gusts_10m," +
     "temperature_2m,precipitation,weather_code" +
     "&wind_speed_unit=ms" +
@@ -89,5 +89,5 @@ export async function fetchWindForDate(date: string): Promise<{
 
 /** Convenience wrapper for current date. */
 export async function fetchTodaysWind() {
-  return fetchWindForDate(copenhagenToday());
+  return fetchWindForDate(copenhagenToday(), { lat: 55.83, lon: 12.55 });
 }
