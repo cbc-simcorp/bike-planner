@@ -1,6 +1,9 @@
+"use client";
+
 import { assessWind, compassLabel, type Leg } from "@/lib/wind";
 import type { LegWind } from "@/lib/openMeteo";
 import { describeWeather } from "@/lib/weatherCode";
+import { useEffect, useState } from "react";
 
 type Props = {
   leg: Leg;
@@ -8,6 +11,14 @@ type Props = {
 };
 
 export function WindCard({ leg, wind }: Props) {
+  const [isGusting, setIsGusting] = useState(false);
+
+  useEffect(() => {
+    if (!isGusting) return;
+    const timeout = window.setTimeout(() => setIsGusting(false), 700);
+    return () => window.clearTimeout(timeout);
+  }, [isGusting]);
+
   if (!wind.data) {
     return (
       <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
@@ -60,6 +71,14 @@ export function WindCard({ leg, wind }: Props) {
   // Arrow points where the wind is going (windFrom + 180), with 0° = up (north).
   const arrowRotation = (windFromDeg + 180) % 360;
 
+  const gustLabel = isGusting
+    ? a.kind === "tailwind"
+      ? "gust mode: pushing from behind"
+      : a.kind === "headwind"
+        ? "gust mode: pushing against you"
+        : "gust mode: sideways breeze"
+    : null;
+
   return (
     <article
       className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-2 dark:border-slate-800 dark:bg-slate-900 ${palette.ring}`}
@@ -89,15 +108,30 @@ export function WindCard({ leg, wind }: Props) {
 
       <div className="mt-4 grid grid-cols-[auto_1fr] items-start gap-2 sm:gap-4">
         <div>
-          <CompassArrow
-            rotationDeg={arrowRotation}
-            travelBearing={leg.travelBearing}
-            colorClass={palette.arrow}
-          />
+          <button
+            type="button"
+            onClick={() => setIsGusting(true)}
+            className="touch-manipulation rounded-full outline-none ring-sky-500/30 transition focus-visible:ring-2"
+            aria-label="Play wind gust animation"
+            title="Tap for a gust"
+          >
+            <CompassArrow
+              rotationDeg={arrowRotation}
+              travelBearing={leg.travelBearing}
+              colorClass={palette.arrow}
+              gusting={isGusting}
+            />
+          </button>
         </div>
 
-        <AlongBarChart values={pointAlong} />
+        <AlongBarChart values={pointAlong} gusting={isGusting} />
       </div>
+
+      {gustLabel && (
+        <div className="mt-2 text-xs font-medium text-sky-700 dark:text-sky-300">
+          {gustLabel}
+        </div>
+      )}
 
       <div className="mt-3">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
@@ -141,7 +175,13 @@ export function WindCard({ leg, wind }: Props) {
   );
 }
 
-function AlongBarChart({ values }: { values: number[] }) {
+function AlongBarChart({
+  values,
+  gusting,
+}: {
+  values: number[];
+  gusting: boolean;
+}) {
   const bars = values.slice(0, 7);
   const count = bars.length || 7;
   const maxAbs = Math.max(0.5, ...bars.map((v) => Math.abs(v)));
@@ -154,7 +194,11 @@ function AlongBarChart({ values }: { values: number[] }) {
   const scale = (height * 0.42) / maxAbs;
 
   return (
-    <div className="rounded-xl border border-slate-200 bg-slate-50 p-1.5 dark:border-slate-700 dark:bg-slate-950/40">
+    <div
+      className={`rounded-xl border border-slate-200 bg-slate-50 p-1.5 transition-transform duration-300 dark:border-slate-700 dark:bg-slate-950/40 ${
+        gusting ? "scale-[1.02] ring-2 ring-sky-300/60 dark:ring-sky-700/50" : ""
+      }`}
+    >
       <svg
         viewBox={`0 0 ${width} ${height}`}
         className="h-20 w-full"
@@ -183,7 +227,7 @@ function AlongBarChart({ values }: { values: number[] }) {
               height={Math.max(1, h)}
               rx="2"
               fill={v >= 0 ? "#16a34a" : "#dc2626"}
-              opacity="0.9"
+              opacity={gusting ? "1" : "0.9"}
             />
           );
         })}
@@ -224,16 +268,20 @@ function CompassArrow({
   rotationDeg,
   travelBearing,
   colorClass,
+  gusting,
 }: {
   rotationDeg: number;
   travelBearing: number;
   colorClass: string;
+  gusting: boolean;
 }) {
   // SVG viewBox is 100x100, center (50,50). 0° = up (north), clockwise.
   return (
     <svg
       viewBox="0 0 100 100"
-      className="h-24 w-24 shrink-0 sm:h-28 sm:w-28"
+      className={`h-24 w-24 shrink-0 sm:h-28 sm:w-28 ${
+        gusting ? "animate-[spin_700ms_ease-in-out]" : ""
+      }`}
       aria-label={`Wind blowing toward ${Math.round(rotationDeg)}°`}
     >
       {/* compass ring */}
