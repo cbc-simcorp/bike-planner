@@ -27,11 +27,30 @@ type HomeProps = {
       }>;
 };
 
+function extractTown(name: string): string {
+  const parts = name
+    .split(",")
+    .map((part) => part.trim())
+    .filter(Boolean);
+
+  if (!parts.length) return "Home";
+
+  let candidate = parts[0];
+  if (/\d/.test(candidate) && parts.length > 1) {
+    candidate = parts[1];
+  }
+
+  // Remove postal codes or street numbers if present in the chosen segment.
+  const cleaned = candidate.replace(/\b\d+[A-Za-z-]*\b/g, "").trim();
+  return cleaned || candidate;
+}
+
 export default async function Home({ searchParams }: HomeProps) {
   const resolvedSearchParams = await Promise.resolve(searchParams);
   const cookieStore = await cookies();
   const settingsCookie = cookieStore.get(SETTINGS_COOKIE)?.value;
   const settings = parseSettingsCookie(settingsCookie);
+  const homeTown = extractTown(settings.home.name);
 
   const routePoints = sampleRoutePoints(settings.home, settings.destination, 7);
   const legs = buildCommuteLegs(
@@ -68,10 +87,10 @@ export default async function Home({ searchParams }: HomeProps) {
       <header className="mb-6 flex items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            Bike to Work
+            Wind & Weather
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
-            {settings.home.name} to {settings.destination.name} · midpoint weather
+            {homeTown} to work
           </p>
         </div>
         <div className="flex items-center gap-2 pt-0.5">
