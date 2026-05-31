@@ -1,16 +1,48 @@
+import { DateRangePane } from "@/components/DateRangePane";
 import { WindCard } from "@/components/WindCard";
-import { fetchTodaysWind } from "@/lib/openMeteo";
-import { assessWind, LEGS } from "@/lib/wind";
+import { fetchWindForDate } from "@/lib/openMeteo";
+import { addDaysIso, assessWind, copenhagenDateLabel, copenhagenToday, LEGS } from "@/lib/wind";
 
 export const revalidate = 600; // seconds
 
-export default async function Home() {
+const MAX_FUTURE_DAYS = 2;
+
+type HomeProps = {
+  searchParams?: {
+    date?: string | string[];
+  };
+};
+
+export default async function Home({ searchParams }: HomeProps) {
+  const today = copenhagenToday();
+  const maxDate = addDaysIso(today, MAX_FUTURE_DAYS);
+  const dateOptions = Array.from({ length: MAX_FUTURE_DAYS + 1 }, (_, i) => {
+    const value = addDaysIso(today, i);
+    const label = i === 0 ? "Today" : i === 1 ? "Tomorrow" : copenhagenDateLabel(value);
+    return { value, label };
+  });
+
+  const rawDate = Array.isArray(searchParams?.date)
+    ? searchParams?.date[0]
+    : searchParams?.date;
+  const requestedDate =
+    typeof rawDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
+      ? rawDate
+      : today;
+  const clampedDate =
+    requestedDate < today ? today : requestedDate > maxDate ? maxDate : requestedDate;
+  const selectedIndex = Math.max(
+    0,
+    dateOptions.findIndex((d) => d.value === clampedDate)
+  );
+  const selectedDate = dateOptions[selectedIndex]?.value ?? today;
+
   let data:
-    | Awaited<ReturnType<typeof fetchTodaysWind>>
+    | Awaited<ReturnType<typeof fetchWindForDate>>
     | null = null;
   let error: string | null = null;
   try {
-    data = await fetchTodaysWind();
+    data = await fetchWindForDate(selectedDate);
   } catch (e) {
     error = e instanceof Error ? e.message : String(e);
   }
@@ -39,14 +71,14 @@ export default async function Home() {
           BikePlanner — Wind
         </h1>
         <p className="text-sm text-slate-500 dark:text-slate-400">
-          Bike commute · {data?.date ?? "today"} · data from open-meteo
+          Bike commute · {dateOptions[selectedIndex]?.label ?? "Today"} · data from open-meteo
         </p>
       </header>
 
       {bestLeg && (
         <section className="mb-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900 dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-sky-200">
           <p className="text-xs uppercase tracking-wide text-sky-700 dark:text-sky-300">
-            Best leg today
+            Best leg
           </p>
           <p className="mt-1 text-base font-semibold">
             {bestLeg.leg.routeLabel} at {bestLeg.leg.timeLabel}
@@ -64,18 +96,20 @@ export default async function Home() {
         </div>
       )}
 
-      <div className="grid grid-cols-1 gap-4">
-        {LEGS.map((leg) => {
-          const w = leg.id === "morning" ? data?.morning : data?.evening;
-          return (
-            <WindCard
-              key={leg.id}
-              leg={leg}
-              wind={w ?? { hour: leg.hour, data: null, isForecast: false }}
-            />
-          );
-        })}
-      </div>
+      <DateRangePane options={dateOptions} selectedIndex={selectedIndex}>
+        <div className="grid grid-cols-1 gap-4">
+          {LEGS.map((leg) => {
+            const w = leg.id === "morning" ? data?.morning : data?.evening;
+            return (
+              <WindCard
+                key={leg.id}
+                leg={leg}
+                wind={w ?? { hour: leg.hour, data: null, isForecast: false }}
+              />
+            );
+          })}
+        </div>
+      </DateRangePane>
 
       <footer className="mt-8 text-xs text-slate-400 dark:text-slate-500">
         Green = tailwind · Amber = crosswind · Red = headwind. Arrow shows where

@@ -28,13 +28,12 @@ export type LegWind = {
   isForecast: boolean;   // true if the slot is in the future
 };
 
-/** Fetch today's hourly weather for the bike-route midpoint, pick the 07:00 and 17:00 slots. */
-export async function fetchTodaysWind(): Promise<{
+/** Fetch hourly weather for a selected date at the bike-route midpoint and pick 07:00 / 17:00. */
+export async function fetchWindForDate(date: string): Promise<{
   date: string;
   morning: LegWind;
   evening: LegWind;
 }> {
-  const date = copenhagenToday();
   const url =
     "https://api.open-meteo.com/v1/forecast" +
     `?latitude=${ROUTE_LAT}` +
@@ -43,8 +42,7 @@ export async function fetchTodaysWind(): Promise<{
     "temperature_2m,precipitation,weather_code" +
     "&wind_speed_unit=ms" +
     "&timezone=Europe%2FCopenhagen" +
-    "&forecast_days=2" +
-    "&past_days=1";
+    "&forecast_days=3";
 
   const res = await fetch(url, { next: { revalidate: 600 } });
   if (!res.ok) {
@@ -52,7 +50,8 @@ export async function fetchTodaysWind(): Promise<{
   }
   const json = (await res.json()) as OpenMeteoResponse;
 
-  // Current hour-of-day in Copenhagen, used to decide forecast vs. observed.
+  // Current date/hour in Copenhagen, used to decide forecast vs. observed.
+  const cphDate = copenhagenToday();
   const cphHour = Number(
     new Intl.DateTimeFormat("en-GB", {
       timeZone: "Europe/Copenhagen",
@@ -65,7 +64,10 @@ export async function fetchTodaysWind(): Promise<{
     const hh = hour.toString().padStart(2, "0");
     const target = `${date}T${hh}:00`;
     const idx = json.hourly.time.indexOf(target);
-    if (idx < 0) return { hour, data: null, isForecast: hour >= cphHour };
+    const isFutureDate = date > cphDate;
+    const isPastDate = date < cphDate;
+    const isForecast = isPastDate ? false : isFutureDate ? true : hour >= cphHour;
+    if (idx < 0) return { hour, data: null, isForecast };
     const data: HourlySample = {
       time: json.hourly.time[idx],
       windFromDeg: json.hourly.wind_direction_10m[idx],
@@ -75,7 +77,7 @@ export async function fetchTodaysWind(): Promise<{
       precipitationMm: json.hourly.precipitation[idx],
       weatherCode: json.hourly.weather_code[idx],
     };
-    return { hour, data, isForecast: hour >= cphHour };
+    return { hour, data, isForecast };
   };
 
   return {
@@ -83,4 +85,9 @@ export async function fetchTodaysWind(): Promise<{
     morning: pick(7),
     evening: pick(17),
   };
+}
+
+/** Convenience wrapper for current date. */
+export async function fetchTodaysWind() {
+  return fetchWindForDate(copenhagenToday());
 }

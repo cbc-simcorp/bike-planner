@@ -79,3 +79,21 @@ export function copenhagenToday(): string {
     timeZone: "Europe/Copenhagen",
   }).format(new Date());
 }
+
+export function addDaysIso(isoDate: string, days: number): string {
+  const [y, m, d] = isoDate.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  dt.setUTCDate(dt.getUTCDate() + days);
+  return dt.toISOString().slice(0, 10);
+}
+
+export function copenhagenDateLabel(isoDate: string): string {
+  const [y, m, d] = isoDate.split("-").map(Number);
+  const dt = new Date(Date.UTC(y, m - 1, d));
+  return new Intl.DateTimeFormat("en-GB", {
+    timeZone: "Europe/Copenhagen",
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+  }).format(dt);
+}
