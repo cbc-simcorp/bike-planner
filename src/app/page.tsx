@@ -8,12 +8,17 @@ export const revalidate = 600; // seconds
 const MAX_FUTURE_DAYS = 2;
 
 type HomeProps = {
-  searchParams?: {
-    date?: string | string[];
-  };
+  searchParams?:
+    | {
+        date?: string | string[];
+      }
+    | Promise<{
+        date?: string | string[];
+      }>;
 };
 
 export default async function Home({ searchParams }: HomeProps) {
+  const resolvedSearchParams = await Promise.resolve(searchParams);
   const today = copenhagenToday();
   const maxDate = addDaysIso(today, MAX_FUTURE_DAYS);
   const dateOptions = Array.from({ length: MAX_FUTURE_DAYS + 1 }, (_, i) => {
@@ -22,9 +27,9 @@ export default async function Home({ searchParams }: HomeProps) {
     return { value, label };
   });
 
-  const rawDate = Array.isArray(searchParams?.date)
-    ? searchParams?.date[0]
-    : searchParams?.date;
+  const rawDate = Array.isArray(resolvedSearchParams?.date)
+    ? resolvedSearchParams?.date[0]
+    : resolvedSearchParams?.date;
   const requestedDate =
     typeof rawDate === "string" && /^\d{4}-\d{2}-\d{2}$/.test(rawDate)
       ? rawDate
