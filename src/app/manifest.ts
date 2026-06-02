@@ -2,8 +2,8 @@ import type { MetadataRoute } from "next";
 
 export default function manifest(): MetadataRoute.Manifest {
   return {
-    name: "BikePlanner Wind",
-    short_name: "Bike Wind",
+    name: "Tailwind?",
+    short_name: "Tailwind?",
     description: "Phone-friendly bike commute wind planner.",
     start_url: "/",
     display: "standalone",
