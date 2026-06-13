@@ -1,8 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, type TouchEventHandler } from "react";
+import { useEffect, useRef, useState, type TouchEventHandler } from "react";
 import { WindCard } from "@/components/WindCard";
-import { type Leg, assessWind } from "@/lib/wind";
+import { type Leg } from "@/lib/wind";
 import { type LegWind } from "@/lib/openMeteo";
 
 type DateOption = {
@@ -39,28 +39,6 @@ export function WindDateCarousel({
   const dragBaseIndexRef = useRef(initialIndex);
 
   const currentOption = options[index] ?? options[0];
-  const currentData = dataByDate[currentOption.value];
-
-  const bestLeg = useMemo(() => {
-    if (!currentData) return null;
-    const scored = legs
-      .map((leg) => {
-        const w = leg.id === "morning" ? currentData.morning : currentData.evening;
-        if (!w?.data) return null;
-        const assessment = assessWind(
-          w.data.windFromDeg,
-          w.data.windSpeedMs,
-          leg.travelBearing
-        );
-        return { leg, assessment };
-      })
-      .filter((x): x is NonNullable<typeof x> => x !== null);
-
-    if (!scored.length) return null;
-    return scored.reduce((best, current) =>
-      current.assessment.along > best.assessment.along ? current : best
-    );
-  }, [currentData, legs]);
 
   useEffect(() => {
     const url = new URL(window.location.href);
@@ -156,20 +134,7 @@ export function WindDateCarousel({
         </div>
       </div>
 
-      {bestLeg && (
-        <section className="mb-4 rounded-2xl border border-sky-200 bg-sky-50 px-4 py-3 text-sm text-sky-900 dark:border-sky-900/60 dark:bg-sky-950/40 dark:text-sky-200">
-          <p className="text-xs uppercase tracking-wide text-sky-700 dark:text-sky-300">
-            Best leg
-          </p>
-          <p className="mt-1 text-base font-semibold">
-            {bestLeg.leg.routeLabel} at {bestLeg.leg.timeLabel}
-          </p>
-          <p className="mt-1 text-xs text-sky-700 dark:text-sky-300">
-            Along-travel wind: {bestLeg.assessment.along >= 0 ? "+" : ""}
-            {bestLeg.assessment.along.toFixed(1)} m/s
-          </p>
-        </section>
-      )}
+
 
       <div
         ref={trackRef}
