@@ -161,7 +161,15 @@ export async function fetchWindForDates(
   hours: CommuteHours
 ): Promise<Record<string, DayWind>> {
   const points = routePoints.length ? routePoints : [{ lat: 55.83, lon: 12.55 }];
-  const hourlySeries = await Promise.all(points.map((p) => fetchHourlySeriesAtPoint(p)));
+
+  // Fetch points sequentially with a small delay to avoid HTTP 429 rate limiting.
+  const hourlySeries: OpenMeteoResponse["hourly"][] = [];
+  for (const p of points) {
+    if (hourlySeries.length > 0) {
+      await new Promise((resolve) => setTimeout(resolve, 120));
+    }
+    hourlySeries.push(await fetchHourlySeriesAtPoint(p));
+  }
 
   const cphDate = copenhagenToday();
   const cphHour = Number(
