@@ -14,7 +14,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Tailwind?",
+  title: "Ride with the wind",
   description: "Phone-friendly bike commute wind planner.",
   manifest: "/manifest.webmanifest",
   icons: {
@@ -28,7 +28,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "Tailwind?",
+    title: "Ride with the wind",
     statusBarStyle: "default",
   },
 };

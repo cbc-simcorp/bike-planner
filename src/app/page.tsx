@@ -87,7 +87,7 @@ export default async function Home({ searchParams }: HomeProps) {
       <header className="mb-6 flex items-start justify-between gap-3">
         <div>
           <h1 className="text-2xl font-bold tracking-tight sm:text-3xl">
-            Tailwind?
+            Ride with the wind
           </h1>
           <p className="text-sm text-slate-500 dark:text-slate-400">
             Between {homeTown} and Work
