@@ -232,7 +232,7 @@ function AlongBarChart({
   return (
     <div className="rounded-xl border border-slate-200 bg-slate-50 p-1.5 dark:border-slate-700 dark:bg-slate-950/40">
       {gustLabel ? (
-        <div className="flex h-12 items-center justify-center overflow-hidden px-1.5">
+        <div className="flex h-16 items-center justify-center overflow-hidden px-1.5">
           <p
             className={`w-full break-words text-center font-semibold leading-tight text-sky-700 transition-opacity duration-200 dark:text-sky-300 ${quoteFontSizeClass} ${quoteFading ? "opacity-0" : "opacity-100"}`}
           >
@@ -242,7 +242,7 @@ function AlongBarChart({
       ) : (
         <svg
           viewBox={`0 0 ${width} ${height}`}
-          className="h-12 w-full"
+          className="h-16 w-full"
           role="img"
           aria-label="Route segment wind projection chart"
         >
@@ -321,7 +321,7 @@ function CompassArrow({
   return (
     <svg
       viewBox="0 0 100 100"
-      className={`h-20 w-20 shrink-0 ${
+      className={`h-28 w-28 shrink-0 ${
         gusting ? "animate-[spin_500ms_linear_2]" : ""
       }`}
       aria-label={`Wind blowing toward ${Math.round(rotationDeg)}°`}
@@ -340,14 +340,9 @@ function CompassArrow({
       <text x="50" y="92" textAnchor="middle" className="fill-slate-400 text-[9px]">S</text>
       <text x="12" y="53" textAnchor="middle" className="fill-slate-400 text-[9px]">W</text>
 
-      {/* travel-direction indicator: a faint chevron pointing where I'm going */}
-      <g
-        transform={`rotate(${travelBearing} 50 50)`}
-        className="stroke-slate-400/70 dark:stroke-slate-500/70"
-        strokeWidth="1.5"
-        fill="none"
-      >
-        <path d="M 42 78 L 50 84 L 58 78" />
+      {/* travel-direction indicator: colored circle on the ring edge */}
+      <g transform={`rotate(${travelBearing} 50 50)`}>
+        <circle cx="50" cy="9" r="5.5" fill="#0ea5e9" opacity="0.9" />
       </g>
 
       {/* wind arrow */}
