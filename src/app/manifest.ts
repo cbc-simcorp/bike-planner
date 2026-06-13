@@ -7,6 +7,7 @@ export default function manifest(): MetadataRoute.Manifest {
     description: "Phone-friendly bike commute wind planner.",
     start_url: "/",
     display: "standalone",
+    orientation: "portrait",
     background_color: "#ffffff",
     theme_color: "#0f172a",
     icons: [
