@@ -114,11 +114,7 @@ export default async function Home({ searchParams }: HomeProps) {
         />
       </Suspense>
 
-      <footer className="mt-8 text-xs text-slate-400 dark:text-slate-500">
-        Green = tailwind · Amber = crosswind · Red = headwind. Arrow shows where
-        the wind is blowing to; the faint chevron at the bottom of the compass
-        shows your travel direction.
-      </footer>
+
     </main>
   );
 }
