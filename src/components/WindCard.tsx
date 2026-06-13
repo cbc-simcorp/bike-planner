@@ -150,9 +150,9 @@ export function WindCard({ leg, wind }: Props) {
         </div>
       </div>
 
-      {/* Row 2: compass (left) + chart (right) — stretch row, compass centers in full height */}
+      {/* Row 2: left col = compass + weather below; right col = chart */}
       <div className="mt-2 flex items-stretch gap-4">
-        <div className="flex shrink-0 items-center">
+        <div className="flex w-28 shrink-0 flex-col items-center justify-center gap-2">
           <button
             type="button"
             onClick={triggerGust}
@@ -167,6 +167,22 @@ export function WindCard({ leg, wind }: Props) {
               gusting={isSpinning}
             />
           </button>
+          <div className="flex flex-wrap justify-center gap-x-1 gap-y-0.5 text-xs">
+            <span className="text-base leading-none" aria-hidden>
+              {cond.emoji}
+            </span>
+            <span className="font-medium text-slate-700 dark:text-slate-200">
+              {cond.label}
+            </span>
+            <span className="tabular-nums font-semibold">
+              {Math.round(temperatureC)} °C
+            </span>
+            {precipitationMm > 0 && (
+              <span className="tabular-nums text-sky-700 dark:text-sky-300">
+                {precipitationMm.toFixed(1)} mm
+              </span>
+            )}
+          </div>
         </div>
 
         <button
@@ -182,28 +198,6 @@ export function WindCard({ leg, wind }: Props) {
             quoteFading={isQuoteFading}
           />
         </button>
-      </div>
-
-      {/* Weather row: below compass+chart, right-aligned */}
-      <div className="mt-1.5 flex flex-wrap items-center justify-end gap-x-1.5 gap-y-0.5 text-xs">
-        <span className="text-base leading-none" aria-hidden>
-          {cond.emoji}
-        </span>
-        <span className="font-medium text-slate-700 dark:text-slate-200">
-          {cond.label}
-        </span>
-        <span className="text-slate-400">·</span>
-        <span className="tabular-nums font-semibold">
-          {Math.round(temperatureC)} °C
-        </span>
-        {precipitationMm > 0 && (
-          <>
-            <span className="text-slate-400">·</span>
-            <span className="tabular-nums text-sky-700 dark:text-sky-300">
-              {precipitationMm.toFixed(1)} mm
-            </span>
-          </>
-        )}
       </div>
     </article>
   );
