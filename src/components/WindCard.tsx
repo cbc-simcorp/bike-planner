@@ -117,14 +117,16 @@ export function WindCard({ leg, wind }: Props) {
     >
       <Header leg={leg} forecast={wind.isForecast} />
 
-      {/* Row 1: verdict (left) baseline-aligned with wind speeds (right) */}
-      <div className="mt-3 flex items-baseline justify-between gap-4">
-        <div
-          className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${palette.bg} ${palette.text}`}
-        >
-          {palette.verdict}
+      {/* Row 1: verdict (left, centered in compass-width column) + wind speeds (right) */}
+      <div className="mt-3 flex items-baseline gap-4">
+        <div className="flex w-28 shrink-0 justify-center">
+          <div
+            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${palette.bg} ${palette.text}`}
+          >
+            {palette.verdict}
+          </div>
         </div>
-        <div className="flex items-baseline gap-3">
+        <div className="flex flex-1 items-baseline justify-end gap-3">
           <div
             className={`text-xs font-semibold tabular-nums ${
               effectiveRouteWind > 0
