@@ -117,7 +117,7 @@ export function WindCard({ leg, wind }: Props) {
     >
       <Header leg={leg} forecast={wind.isForecast} />
 
-      <div className="mt-3 flex items-start gap-4">
+      <div className="mt-3 flex items-center gap-4">
         {/* Left column: verdict badge + compass */}
         <div className="flex shrink-0 flex-col items-center gap-2">
           <div
