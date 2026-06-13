@@ -240,7 +240,7 @@ function AlongBarChart({
   return (
     <div className="rounded-xl border border-slate-200 bg-slate-50 p-1.5 dark:border-slate-700 dark:bg-slate-950/40">
       {gustLabel ? (
-        <div className="flex h-32 items-center justify-center overflow-hidden px-1.5">
+        <div className="flex h-[115px] items-center justify-center overflow-hidden px-1.5">
           <p
             className={`w-full break-words text-center font-semibold leading-tight text-sky-700 transition-opacity duration-200 dark:text-sky-300 ${quoteFontSizeClass} ${quoteFading ? "opacity-0" : "opacity-100"}`}
           >
@@ -250,7 +250,7 @@ function AlongBarChart({
       ) : (
         <svg
           viewBox={`0 0 ${width} ${height}`}
-          className="h-32 w-full"
+          className="h-[115px] w-full"
           role="img"
           aria-label="Route segment wind projection chart"
         >
