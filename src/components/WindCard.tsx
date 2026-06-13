@@ -117,6 +117,28 @@ export function WindCard({ leg, wind }: Props) {
     >
       <Header leg={leg} forecast={wind.isForecast} />
 
+      {/* Weather row: directly below header */}
+      <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
+        <span className="text-base leading-none" aria-hidden>
+          {cond.emoji}
+        </span>
+        <span className="font-medium text-slate-700 dark:text-slate-200">
+          {cond.label}
+        </span>
+        <span className="text-slate-400">·</span>
+        <span className="tabular-nums font-semibold">
+          {Math.round(temperatureC)} °C
+        </span>
+        {precipitationMm > 0 && (
+          <>
+            <span className="text-slate-400">·</span>
+            <span className="tabular-nums text-sky-700 dark:text-sky-300">
+              {precipitationMm.toFixed(1)} mm
+            </span>
+          </>
+        )}
+      </div>
+
       <div className="mt-3 flex items-center gap-4">
         {/* Left column: verdict badge + compass */}
         <div className="flex shrink-0 flex-col items-center gap-2">
@@ -179,27 +201,6 @@ export function WindCard({ leg, wind }: Props) {
               quoteFading={isQuoteFading}
             />
           </button>
-
-          <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
-            <span className="text-base leading-none" aria-hidden>
-              {cond.emoji}
-            </span>
-            <span className="font-medium text-slate-700 dark:text-slate-200">
-              {cond.label}
-            </span>
-            <span className="text-slate-400">·</span>
-            <span className="tabular-nums font-semibold">
-              {Math.round(temperatureC)} °C
-            </span>
-            {precipitationMm > 0 && (
-              <>
-                <span className="text-slate-400">·</span>
-                <span className="tabular-nums text-sky-700 dark:text-sky-300">
-                  {precipitationMm.toFixed(1)} mm
-                </span>
-              </>
-            )}
-          </div>
         </div>
       </div>
     </article>
