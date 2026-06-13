@@ -117,89 +117,90 @@ export function WindCard({ leg, wind }: Props) {
     >
       <Header leg={leg} forecast={wind.isForecast} />
 
-      {/* Weather row: directly below header */}
-      <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
-        <span className="text-base leading-none" aria-hidden>
-          {cond.emoji}
-        </span>
-        <span className="font-medium text-slate-700 dark:text-slate-200">
-          {cond.label}
-        </span>
-        <span className="text-slate-400">·</span>
-        <span className="tabular-nums font-semibold">
-          {Math.round(temperatureC)} °C
-        </span>
-        {precipitationMm > 0 && (
-          <>
-            <span className="text-slate-400">·</span>
-            <span className="tabular-nums text-sky-700 dark:text-sky-300">
-              {precipitationMm.toFixed(1)} mm
-            </span>
-          </>
-        )}
-      </div>
-
-      {/* Top row: verdict left, wind speeds right */}
-      <div className="mt-3 flex items-baseline justify-between gap-4">
-        <div
-          className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${palette.bg} ${palette.text}`}
-        >
-          {palette.verdict}
-        </div>
-        <div className="flex items-baseline gap-3">
+      <div className="mt-3 flex items-center gap-4">
+        {/* Left column: verdict badge (centered) + compass */}
+        <div className="flex shrink-0 flex-col items-center gap-2">
           <div
-            className={`text-xs font-semibold tabular-nums ${
-              effectiveRouteWind > 0
-                ? "text-emerald-700 dark:text-emerald-300"
-                : effectiveRouteWind < 0
-                  ? "text-rose-700 dark:text-rose-300"
-                  : "text-slate-600 dark:text-slate-400"
-            }`}
+            className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${palette.bg} ${palette.text}`}
           >
-            eff. {effectiveRouteWind > 0 ? "+" : ""}
-            {effectiveRouteWind.toFixed(1)} m/s
+            {palette.verdict}
           </div>
-          <div>
-            <span className="text-2xl font-bold leading-none tabular-nums text-slate-900 dark:text-slate-100">
-              {avgWindSpeed.toFixed(1)}
+          <button
+            type="button"
+            onClick={triggerGust}
+            className="touch-manipulation rounded-full outline-none ring-sky-500/30 transition focus-visible:ring-2"
+            aria-label="Show random bike quote"
+            title="Tap for a quote"
+          >
+            <CompassArrow
+              rotationDeg={arrowRotation}
+              travelBearing={leg.travelBearing}
+              colorClass={palette.arrow}
+              gusting={isSpinning}
+            />
+          </button>
+        </div>
+
+        {/* Right column: speeds + chart + weather, all right-aligned */}
+        <div className="min-w-0 flex-1">
+          <div className="flex items-baseline justify-end gap-3">
+            <div
+              className={`text-xs font-semibold tabular-nums ${
+                effectiveRouteWind > 0
+                  ? "text-emerald-700 dark:text-emerald-300"
+                  : effectiveRouteWind < 0
+                    ? "text-rose-700 dark:text-rose-300"
+                    : "text-slate-600 dark:text-slate-400"
+              }`}
+            >
+              eff. {effectiveRouteWind > 0 ? "+" : ""}
+              {effectiveRouteWind.toFixed(1)} m/s
+            </div>
+            <div>
+              <span className="text-2xl font-bold leading-none tabular-nums text-slate-900 dark:text-slate-100">
+                {avgWindSpeed.toFixed(1)}
+              </span>
+              <span className="ml-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+                m/s
+              </span>
+            </div>
+          </div>
+
+          <button
+            type="button"
+            onClick={triggerGust}
+            className="mt-2 w-full touch-manipulation text-left outline-none ring-sky-500/30 transition focus-visible:ring-2"
+            aria-label="Wind segment chart"
+            title="Tap for a quote"
+          >
+            <AlongBarChart
+              values={pointAlong}
+              gustLabel={gustLabel}
+              quoteFading={isQuoteFading}
+            />
+          </button>
+
+          <div className="mt-1.5 flex flex-wrap items-center justify-end gap-x-1.5 gap-y-0.5 text-xs">
+            <span className="text-base leading-none" aria-hidden>
+              {cond.emoji}
             </span>
-            <span className="ml-1 text-sm font-medium text-slate-700 dark:text-slate-300">
-              m/s
+            <span className="font-medium text-slate-700 dark:text-slate-200">
+              {cond.label}
             </span>
+            <span className="text-slate-400">·</span>
+            <span className="tabular-nums font-semibold">
+              {Math.round(temperatureC)} °C
+            </span>
+            {precipitationMm > 0 && (
+              <>
+                <span className="text-slate-400">·</span>
+                <span className="tabular-nums text-sky-700 dark:text-sky-300">
+                  {precipitationMm.toFixed(1)} mm
+                </span>
+              </>
+            )}
           </div>
         </div>
-      </div>
-
-      {/* Bottom row: compass left, bar chart right — both vertically centered */}
-      <div className="mt-2 flex items-center gap-4">
-        <button
-          type="button"
-          onClick={triggerGust}
-          className="touch-manipulation shrink-0 rounded-full outline-none ring-sky-500/30 transition focus-visible:ring-2"
-          aria-label="Show random bike quote"
-          title="Tap for a quote"
-        >
-          <CompassArrow
-            rotationDeg={arrowRotation}
-            travelBearing={leg.travelBearing}
-            colorClass={palette.arrow}
-            gusting={isSpinning}
-          />
-        </button>
-
-        <button
-          type="button"
-          onClick={triggerGust}
-          className="min-w-0 flex-1 touch-manipulation text-left outline-none ring-sky-500/30 transition focus-visible:ring-2"
-          aria-label="Wind segment chart"
-          title="Tap for a quote"
-        >
-          <AlongBarChart
-            values={pointAlong}
-            gustLabel={gustLabel}
-            quoteFading={isQuoteFading}
-          />
-        </button>
       </div>
     </article>
   );
