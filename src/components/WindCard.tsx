@@ -340,9 +340,9 @@ function CompassArrow({
       <text x="50" y="92" textAnchor="middle" className="fill-slate-400 text-[9px]">S</text>
       <text x="12" y="53" textAnchor="middle" className="fill-slate-400 text-[9px]">W</text>
 
-      {/* travel-direction indicator: colored circle on the ring edge */}
+      {/* travel-direction indicator: filled triangle pointing outward on the ring edge */}
       <g transform={`rotate(${travelBearing} 50 50)`}>
-        <circle cx="50" cy="9" r="5.5" fill="#0ea5e9" opacity="0.9" />
+        <polygon points="50,2 44,14 56,14" fill="#0ea5e9" opacity="0.9" />
       </g>
 
       {/* wind arrow */}
