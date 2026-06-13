@@ -148,22 +148,24 @@ export function WindCard({ leg, wind }: Props) {
         </div>
       </div>
 
-      {/* Row 2: compass (left) + chart (right) — items-center aligns only these two */}
-      <div className="mt-2 flex items-center gap-4">
-        <button
-          type="button"
-          onClick={triggerGust}
-          className="touch-manipulation shrink-0 rounded-full outline-none ring-sky-500/30 transition focus-visible:ring-2"
-          aria-label="Show random bike quote"
-          title="Tap for a quote"
-        >
-          <CompassArrow
-            rotationDeg={arrowRotation}
-            travelBearing={leg.travelBearing}
-            colorClass={palette.arrow}
-            gusting={isSpinning}
-          />
-        </button>
+      {/* Row 2: compass (left) + chart (right) — stretch row, compass centers in full height */}
+      <div className="mt-2 flex items-stretch gap-4">
+        <div className="flex shrink-0 items-center">
+          <button
+            type="button"
+            onClick={triggerGust}
+            className="touch-manipulation rounded-full outline-none ring-sky-500/30 transition focus-visible:ring-2"
+            aria-label="Show random bike quote"
+            title="Tap for a quote"
+          >
+            <CompassArrow
+              rotationDeg={arrowRotation}
+              travelBearing={leg.travelBearing}
+              colorClass={palette.arrow}
+              gusting={isSpinning}
+            />
+          </button>
+        </div>
 
         <button
           type="button"
