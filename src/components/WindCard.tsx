@@ -300,9 +300,6 @@ function Header({ leg, forecast }: { leg: Leg; forecast: boolean }) {
         {leg.routeLabel}
       </h2>
       <div className="flex shrink-0 items-center gap-1.5">
-        <span className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
-          {leg.timeLabel} CET
-        </span>
         <span
           className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide ${
             forecast
