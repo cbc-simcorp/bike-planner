@@ -38,8 +38,6 @@ export function WindDateCarousel({
   const startAtRef = useRef(0);
   const dragBaseIndexRef = useRef(initialIndex);
 
-  const currentOption = options[index] ?? options[0];
-
   useEffect(() => {
     const url = new URL(window.location.href);
     if (index === 0) {
@@ -158,7 +156,7 @@ export function WindDateCarousel({
                 className="flex-none px-0.5"
                 style={{ width: `${100 / options.length}%` }}
               >
-                <div className="grid grid-cols-1 gap-4">
+                <div className="grid grid-cols-1 gap-3">
                   {legs.map((leg) => {
                     const w = leg.id === "morning" ? dayData?.morning : dayData?.evening;
                     return (

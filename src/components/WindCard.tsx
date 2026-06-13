@@ -54,9 +54,9 @@ export function WindCard({ leg, wind }: Props) {
 
   if (!wind.data) {
     return (
-      <article className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+      <article className="rounded-2xl border border-slate-200 bg-white p-3 shadow-sm dark:border-slate-800 dark:bg-slate-900">
         <Header leg={leg} forecast={wind.isForecast} />
-        <p className="mt-6 text-sm text-slate-500 dark:text-slate-400">
+        <p className="mt-3 text-sm text-slate-500 dark:text-slate-400">
           No data for {leg.timeLabel} today.
         </p>
       </article>
@@ -113,93 +113,90 @@ export function WindCard({ leg, wind }: Props) {
 
   return (
     <article
-      className={`rounded-2xl border border-slate-200 bg-white p-5 shadow-sm ring-2 dark:border-slate-800 dark:bg-slate-900 ${palette.ring}`}
+      className={`rounded-2xl border border-slate-200 bg-white p-3 shadow-sm ring-2 dark:border-slate-800 dark:bg-slate-900 ${palette.ring}`}
     >
       <Header leg={leg} forecast={wind.isForecast} />
 
-      <div className="mt-3 flex items-end justify-between gap-3">
-        <div
-          className={`inline-block rounded-full px-3 py-1 text-sm font-semibold ${palette.bg} ${palette.text}`}
-        >
-          {palette.verdict}
-        </div>
-        <div className="text-right">
-          <div className="text-3xl font-bold leading-none tabular-nums text-slate-900 dark:text-slate-100 sm:text-4xl">
-            {avgWindSpeed.toFixed(1)}
-            <span className="ml-1 text-base font-medium text-slate-700 dark:text-slate-300">
-              m/s
-            </span>
-          </div>
-          <div
-            className={`mt-1 text-sm font-semibold tabular-nums sm:text-base ${
-              effectiveRouteWind > 0
-                ? "text-emerald-700 dark:text-emerald-300"
-                : effectiveRouteWind < 0
-                  ? "text-rose-700 dark:text-rose-300"
-                  : "text-slate-600 dark:text-slate-400"
-            }`}
-          >
-            effective {effectiveRouteWind > 0 ? "+" : ""}
-            {effectiveRouteWind.toFixed(1)} m/s
-          </div>
-        </div>
-      </div>
-
-      <div className="mt-4 grid grid-cols-[auto_1fr] items-start gap-2 sm:gap-4">
-        <div>
-          <button
-            type="button"
-            onClick={triggerGust}
-            className="touch-manipulation rounded-full outline-none ring-sky-500/30 transition focus-visible:ring-2"
-            aria-label="Show random bike quote"
-            title="Tap for a quote"
-          >
-            <CompassArrow
-              rotationDeg={arrowRotation}
-              travelBearing={leg.travelBearing}
-              colorClass={palette.arrow}
-              gusting={isSpinning}
-            />
-          </button>
-        </div>
-
+      <div className="mt-2 flex items-center gap-3">
         <button
           type="button"
           onClick={triggerGust}
-          className="touch-manipulation text-left outline-none ring-sky-500/30 transition focus-visible:ring-2"
-          aria-label="Wind segment chart"
+          className="touch-manipulation shrink-0 rounded-full outline-none ring-sky-500/30 transition focus-visible:ring-2"
+          aria-label="Show random bike quote"
           title="Tap for a quote"
         >
-          <AlongBarChart
-            values={pointAlong}
-            gustLabel={gustLabel}
-            quoteFading={isQuoteFading}
+          <CompassArrow
+            rotationDeg={arrowRotation}
+            travelBearing={leg.travelBearing}
+            colorClass={palette.arrow}
+            gusting={isSpinning}
           />
         </button>
-      </div>
 
-      <div className="mt-3">
-        <div className="flex flex-wrap items-center gap-x-2 gap-y-1 text-sm">
-          <span className="text-xl leading-none" aria-hidden>
-            {cond.emoji}
-          </span>
-          <span className="font-medium text-slate-700 dark:text-slate-200">
-            {cond.label}
-          </span>
-          <span className="text-slate-400">·</span>
-          <span className="tabular-nums font-semibold">
-            {Math.round(temperatureC)} °C
-          </span>
-          {precipitationMm > 0 && (
-            <>
-              <span className="text-slate-400">·</span>
-              <span className="tabular-nums text-sky-700 dark:text-sky-300">
-                {precipitationMm.toFixed(1)} mm
+        <div className="min-w-0 flex-1">
+          <div className="flex items-center justify-between gap-2">
+            <div
+              className={`inline-block rounded-full px-2.5 py-0.5 text-xs font-semibold ${palette.bg} ${palette.text}`}
+            >
+              {palette.verdict}
+            </div>
+            <div className="text-right">
+              <span className="text-2xl font-bold leading-none tabular-nums text-slate-900 dark:text-slate-100">
+                {avgWindSpeed.toFixed(1)}
               </span>
-            </>
-          )}
-        </div>
+              <span className="ml-1 text-sm font-medium text-slate-700 dark:text-slate-300">
+                m/s
+              </span>
+              <div
+                className={`text-xs font-semibold tabular-nums ${
+                  effectiveRouteWind > 0
+                    ? "text-emerald-700 dark:text-emerald-300"
+                    : effectiveRouteWind < 0
+                      ? "text-rose-700 dark:text-rose-300"
+                      : "text-slate-600 dark:text-slate-400"
+                }`}
+              >
+                eff. {effectiveRouteWind > 0 ? "+" : ""}
+                {effectiveRouteWind.toFixed(1)} m/s
+              </div>
+            </div>
+          </div>
 
+          <button
+            type="button"
+            onClick={triggerGust}
+            className="mt-1.5 w-full touch-manipulation text-left outline-none ring-sky-500/30 transition focus-visible:ring-2"
+            aria-label="Wind segment chart"
+            title="Tap for a quote"
+          >
+            <AlongBarChart
+              values={pointAlong}
+              gustLabel={gustLabel}
+              quoteFading={isQuoteFading}
+            />
+          </button>
+
+          <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
+            <span className="text-base leading-none" aria-hidden>
+              {cond.emoji}
+            </span>
+            <span className="font-medium text-slate-700 dark:text-slate-200">
+              {cond.label}
+            </span>
+            <span className="text-slate-400">·</span>
+            <span className="tabular-nums font-semibold">
+              {Math.round(temperatureC)} °C
+            </span>
+            {precipitationMm > 0 && (
+              <>
+                <span className="text-slate-400">·</span>
+                <span className="tabular-nums text-sky-700 dark:text-sky-300">
+                  {precipitationMm.toFixed(1)} mm
+                </span>
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </article>
   );
@@ -225,21 +222,17 @@ function AlongBarChart({
   const barWidth = Math.max(8, slot * 0.6);
   const scale = (height * 0.42) / maxAbs;
   const quoteFontSizeClass = gustLabel
-    ? gustLabel.length <= 26
-      ? "text-2xl"
-      : gustLabel.length <= 42
-        ? "text-xl"
-        : gustLabel.length <= 62
-          ? "text-lg"
-          : gustLabel.length <= 78
-            ? "text-base"
-            : "text-sm"
-    : "text-sm";
+    ? gustLabel.length <= 30
+      ? "text-sm"
+      : gustLabel.length <= 55
+        ? "text-xs"
+        : "text-[10px]"
+    : "text-[10px]";
 
   return (
     <div className="rounded-xl border border-slate-200 bg-slate-50 p-1.5 dark:border-slate-700 dark:bg-slate-950/40">
       {gustLabel ? (
-        <div className="flex h-20 items-center justify-center overflow-hidden px-1.5">
+        <div className="flex h-12 items-center justify-center overflow-hidden px-1.5">
           <p
             className={`w-full break-words text-center font-semibold leading-tight text-sky-700 transition-opacity duration-200 dark:text-sky-300 ${quoteFontSizeClass} ${quoteFading ? "opacity-0" : "opacity-100"}`}
           >
@@ -249,7 +242,7 @@ function AlongBarChart({
       ) : (
         <svg
           viewBox={`0 0 ${width} ${height}`}
-          className="h-20 w-full"
+          className="h-12 w-full"
           role="img"
           aria-label="Route segment wind projection chart"
         >
@@ -296,7 +289,7 @@ function Header({ leg, forecast }: { leg: Leg; forecast: boolean }) {
         <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
           {leg.timeLabel} CET
         </div>
-        <h2 className="text-lg font-semibold leading-tight">
+        <h2 className="text-base font-semibold leading-tight">
           {leg.routeLabel}
         </h2>
       </div>
@@ -328,7 +321,7 @@ function CompassArrow({
   return (
     <svg
       viewBox="0 0 100 100"
-      className={`h-24 w-24 shrink-0 sm:h-28 sm:w-28 ${
+      className={`h-20 w-20 shrink-0 ${
         gusting ? "animate-[spin_500ms_linear_2]" : ""
       }`}
       aria-label={`Wind blowing toward ${Math.round(rotationDeg)}°`}
