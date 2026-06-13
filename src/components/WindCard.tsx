@@ -142,11 +142,6 @@ export function WindCard({ leg, wind }: Props) {
         </div>
 
         <div className="min-w-0 flex-1">
-          {/* Time label: top row, left-aligned */}
-          <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
-            {leg.timeLabel} CET
-          </div>
-
           {/* Wind speeds: both right-aligned, side by side */}
           <div className="mt-0.5 flex items-baseline justify-end gap-3">
             <div
@@ -293,21 +288,24 @@ function AlongBarChart({
 
 function Header({ leg, forecast }: { leg: Leg; forecast: boolean }) {
   return (
-    <div className="flex items-start justify-between gap-2">
-      <div>
-        <h2 className="text-base font-semibold leading-tight">
-          {leg.routeLabel}
-        </h2>
+    <div className="flex items-center justify-between gap-2">
+      <h2 className="text-base font-semibold leading-tight">
+        {leg.routeLabel}
+      </h2>
+      <div className="flex shrink-0 items-center gap-1.5">
+        <span className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+          {leg.timeLabel} CET
+        </span>
+        <span
+          className={`rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide ${
+            forecast
+              ? "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300"
+              : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
+          }`}
+        >
+          {forecast ? "Forecast" : "Observed"}
+        </span>
       </div>
-      <span
-        className={`shrink-0 rounded-full px-2 py-0.5 text-[10px] font-medium uppercase tracking-wide ${
-          forecast
-            ? "bg-sky-100 text-sky-700 dark:bg-sky-900/40 dark:text-sky-300"
-            : "bg-slate-100 text-slate-600 dark:bg-slate-800 dark:text-slate-300"
-        }`}
-      >
-        {forecast ? "Forecast" : "Observed"}
-      </span>
     </div>
   );
 }
