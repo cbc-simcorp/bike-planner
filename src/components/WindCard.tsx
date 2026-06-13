@@ -148,7 +148,7 @@ export function WindCard({ leg, wind }: Props) {
         </div>
       </div>
 
-      {/* Row 2: compass (left) vertically centered with bar chart (right) */}
+      {/* Row 2: compass (left) + chart (right) — items-center aligns only these two */}
       <div className="mt-2 flex items-center gap-4">
         <button
           type="button"
@@ -165,42 +165,41 @@ export function WindCard({ leg, wind }: Props) {
           />
         </button>
 
-        <div className="min-w-0 flex-1">
-          <button
-            type="button"
-            onClick={triggerGust}
-            className="w-full touch-manipulation text-left outline-none ring-sky-500/30 transition focus-visible:ring-2"
-            aria-label="Wind segment chart"
-            title="Tap for a quote"
-          >
-            <AlongBarChart
-              values={pointAlong}
-              gustLabel={gustLabel}
-              quoteFading={isQuoteFading}
-            />
-          </button>
+        <button
+          type="button"
+          onClick={triggerGust}
+          className="min-w-0 flex-1 touch-manipulation text-left outline-none ring-sky-500/30 transition focus-visible:ring-2"
+          aria-label="Wind segment chart"
+          title="Tap for a quote"
+        >
+          <AlongBarChart
+            values={pointAlong}
+            gustLabel={gustLabel}
+            quoteFading={isQuoteFading}
+          />
+        </button>
+      </div>
 
-          <div className="mt-1.5 flex flex-wrap items-center justify-end gap-x-1.5 gap-y-0.5 text-xs">
-            <span className="text-base leading-none" aria-hidden>
-              {cond.emoji}
-            </span>
-            <span className="font-medium text-slate-700 dark:text-slate-200">
-              {cond.label}
-            </span>
+      {/* Weather row: below compass+chart, right-aligned */}
+      <div className="mt-1.5 flex flex-wrap items-center justify-end gap-x-1.5 gap-y-0.5 text-xs">
+        <span className="text-base leading-none" aria-hidden>
+          {cond.emoji}
+        </span>
+        <span className="font-medium text-slate-700 dark:text-slate-200">
+          {cond.label}
+        </span>
+        <span className="text-slate-400">·</span>
+        <span className="tabular-nums font-semibold">
+          {Math.round(temperatureC)} °C
+        </span>
+        {precipitationMm > 0 && (
+          <>
             <span className="text-slate-400">·</span>
-            <span className="tabular-nums font-semibold">
-              {Math.round(temperatureC)} °C
+            <span className="tabular-nums text-sky-700 dark:text-sky-300">
+              {precipitationMm.toFixed(1)} mm
             </span>
-            {precipitationMm > 0 && (
-              <>
-                <span className="text-slate-400">·</span>
-                <span className="tabular-nums text-sky-700 dark:text-sky-300">
-                  {precipitationMm.toFixed(1)} mm
-                </span>
-              </>
-            )}
-          </div>
-        </div>
+          </>
+        )}
       </div>
     </article>
   );
