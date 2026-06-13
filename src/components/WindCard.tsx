@@ -113,13 +113,13 @@ export function WindCard({ leg, wind }: Props) {
 
   return (
     <article
-      className={`rounded-2xl border border-slate-200 bg-white p-3 shadow-sm ring-2 dark:border-slate-800 dark:bg-slate-900 ${palette.ring}`}
+      className={`rounded-2xl border border-slate-200 bg-white p-4 shadow-sm ring-2 dark:border-slate-800 dark:bg-slate-900 ${palette.ring}`}
     >
       <Header leg={leg} forecast={wind.isForecast} />
 
-      <div className="mt-2 flex items-start gap-3">
+      <div className="mt-3 flex items-start gap-4">
         {/* Left column: verdict badge + compass */}
-        <div className="flex shrink-0 flex-col items-center gap-1.5">
+        <div className="flex shrink-0 flex-col items-center gap-2">
           <div
             className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${palette.bg} ${palette.text}`}
           >
@@ -169,7 +169,7 @@ export function WindCard({ leg, wind }: Props) {
           <button
             type="button"
             onClick={triggerGust}
-            className="mt-1.5 w-full touch-manipulation text-left outline-none ring-sky-500/30 transition focus-visible:ring-2"
+            className="mt-2 w-full touch-manipulation text-left outline-none ring-sky-500/30 transition focus-visible:ring-2"
             aria-label="Wind segment chart"
             title="Tap for a quote"
           >
@@ -180,7 +180,7 @@ export function WindCard({ leg, wind }: Props) {
             />
           </button>
 
-          <div className="mt-1 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
+          <div className="mt-2 flex flex-wrap items-center gap-x-1.5 gap-y-0.5 text-xs">
             <span className="text-base leading-none" aria-hidden>
               {cond.emoji}
             </span>
@@ -226,17 +226,21 @@ function AlongBarChart({
   const barWidth = Math.max(8, slot * 0.6);
   const scale = (height * 0.42) / maxAbs;
   const quoteFontSizeClass = gustLabel
-    ? gustLabel.length <= 30
-      ? "text-sm"
-      : gustLabel.length <= 55
-        ? "text-xs"
-        : "text-[10px]"
-    : "text-[10px]";
+    ? gustLabel.length <= 24
+      ? "text-2xl"
+      : gustLabel.length <= 40
+        ? "text-xl"
+        : gustLabel.length <= 60
+          ? "text-lg"
+          : gustLabel.length <= 80
+            ? "text-base"
+            : "text-sm"
+    : "text-sm";
 
   return (
     <div className="rounded-xl border border-slate-200 bg-slate-50 p-1.5 dark:border-slate-700 dark:bg-slate-950/40">
       {gustLabel ? (
-        <div className="flex h-16 items-center justify-center overflow-hidden px-1.5">
+        <div className="flex h-32 items-center justify-center overflow-hidden px-1.5">
           <p
             className={`w-full break-words text-center font-semibold leading-tight text-sky-700 transition-opacity duration-200 dark:text-sky-300 ${quoteFontSizeClass} ${quoteFading ? "opacity-0" : "opacity-100"}`}
           >
@@ -246,7 +250,7 @@ function AlongBarChart({
       ) : (
         <svg
           viewBox={`0 0 ${width} ${height}`}
-          className="h-16 w-full"
+          className="h-32 w-full"
           role="img"
           aria-label="Route segment wind projection chart"
         >
