@@ -142,8 +142,13 @@ export function WindCard({ leg, wind }: Props) {
         </div>
 
         <div className="min-w-0 flex-1">
-          {/* Wind speeds: effective left, general right, same row */}
-          <div className="flex items-baseline justify-between gap-2">
+          {/* Time label: top row, left-aligned */}
+          <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
+            {leg.timeLabel} CET
+          </div>
+
+          {/* Wind speeds: both right-aligned, side by side */}
+          <div className="mt-0.5 flex items-baseline justify-end gap-3">
             <div
               className={`text-xs font-semibold tabular-nums ${
                 effectiveRouteWind > 0
@@ -156,7 +161,7 @@ export function WindCard({ leg, wind }: Props) {
               eff. {effectiveRouteWind > 0 ? "+" : ""}
               {effectiveRouteWind.toFixed(1)} m/s
             </div>
-            <div className="text-right">
+            <div>
               <span className="text-2xl font-bold leading-none tabular-nums text-slate-900 dark:text-slate-100">
                 {avgWindSpeed.toFixed(1)}
               </span>
@@ -290,9 +295,6 @@ function Header({ leg, forecast }: { leg: Leg; forecast: boolean }) {
   return (
     <div className="flex items-start justify-between gap-2">
       <div>
-        <div className="text-xs uppercase tracking-wide text-slate-500 dark:text-slate-400">
-          {leg.timeLabel} CET
-        </div>
         <h2 className="text-base font-semibold leading-tight">
           {leg.routeLabel}
         </h2>
