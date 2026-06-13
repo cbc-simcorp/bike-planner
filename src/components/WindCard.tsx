@@ -139,8 +139,8 @@ export function WindCard({ leg, wind }: Props) {
         )}
       </div>
 
-      <div className="mt-3 flex items-center gap-4">
-        {/* Left column: verdict badge + compass */}
+      <div className="mt-3 flex items-start gap-4">
+        {/* Left column: verdict badge (top, centered) + compass */}
         <div className="flex shrink-0 flex-col items-center gap-2">
           <div
             className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${palette.bg} ${palette.text}`}
@@ -164,8 +164,8 @@ export function WindCard({ leg, wind }: Props) {
         </div>
 
         <div className="min-w-0 flex-1">
-          {/* Wind speeds: both right-aligned, side by side */}
-          <div className="mt-0.5 flex items-baseline justify-end gap-3">
+          {/* Wind speeds: right-aligned, side by side — vertically aligned with verdict badge */}
+          <div className="flex items-baseline justify-end gap-3">
             <div
               className={`text-xs font-semibold tabular-nums ${
                 effectiveRouteWind > 0
