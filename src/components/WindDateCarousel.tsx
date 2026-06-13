@@ -136,7 +136,7 @@ export function WindDateCarousel({
 
       <div
         ref={trackRef}
-        className="overflow-hidden"
+        className="overflow-hidden py-1"
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
@@ -153,7 +153,7 @@ export function WindDateCarousel({
             return (
               <div
                 key={option.value}
-                className="flex-none px-0.5"
+                className="flex-none px-1"
                 style={{ width: `${100 / options.length}%` }}
               >
                 <div className="grid grid-cols-1 gap-3">
